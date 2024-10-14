@@ -1,28 +1,5 @@
 **Welcome to the comprehensive beginner's guide to Discord!**
 
- **What Does This Article Cover?**
-
--   [What is a Server?](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_efc9b7bc-47bc-4212-8b9c-c0fa76573cfe)
-    -   [How to Use Text and Voice Channels](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_d33e3809-909b-4720-899d-db26c17bafa9)
-    -   [5 Helpful Server Creation Guides](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_65e18002-076e-4670-a07f-4a55cc61cdc4)
-
--   [How to Talk and Hang out in your Server](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_7a0a7888-3021-45dc-9ca5-22ae77af69f6)
-    -   [How to Voice Chat](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_9de92bc2-3bca-459f-8efd-e1e2739ca4f4)
-    -   [How to Video Chat](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_3f7ad8f5-1dd5-43dc-b125-fb95385434de)
-    -   [How to Share Your Screen](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_93cf0203-d5bb-4e02-b1b2-80dad445895d)
-    -   [How to Watch a Screen Share Stream](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_e4672114-d69a-47b1-9518-75a3a004ae7f)
-
--   [More Tips and Tricks](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_ff9f9e16-c1d7-4626-8fbd-42d930f72536)
-    -   [How to Listen to Music Together (Spotify Connect)](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_218d450b-de2c-4f64-8859-3ad6842bdaab)
-    -   [How to Make Your Own Emojis](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_63eed59a-854f-482f-8a4d-08b37797c510)
-    -   [How to Customize Your Profile](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_373cf88f-b19f-4455-94a5-c55ed46ca6a4)
-    -   [Markdown Formatting](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_ca22c0f9-2650-4340-91bb-29cb9ff3fb1d)
-    -   [How to Add a Status to Your Voice/Video Call](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_01H93R67TVRVH0Q6PJEFCDS5JM)
-
--   [Troubleshooting & Support](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_377f3391-50a8-4266-a2c2-7cb90c3cace5)
-    -   [Voice and Video Troubleshooting](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_847c6801-df7a-4c56-b6d1-5af642ad640f)
-    -   [Need Further Help? How to Contact our Support Team](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord#h_008d098f-2913-4eba-97e0-c8f0ff5a82b1)
-
 ## **What is a server?**
 
 Discord gives you the power to create an **invite-only** home for your friends or community - a place where you can talk, hang out, and have fun. We call these special places - **servers**!
