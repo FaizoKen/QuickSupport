@@ -6,10 +6,6 @@
 
 ___
 
-## Contents
-
-<table><tbody><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap01">CHAPTER I.</a></td><td>Down the Rabbit-Hole</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap02">CHAPTER II.</a></td><td>The Pool of Tears</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap03">CHAPTER III.</a></td><td>A Caucus-Race and a Long Tale</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap04">CHAPTER IV.</a></td><td>The Rabbit Sends in a Little Bill</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap05">CHAPTER V.</a></td><td>Advice from a Caterpillar</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap06">CHAPTER VI.</a></td><td>Pig and Pepper</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap07">CHAPTER VII.</a></td><td>A Mad Tea-Party</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap08">CHAPTER VIII.</a></td><td>The Queen’s Croquet-Ground</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap09">CHAPTER IX.</a></td><td>The Mock Turtle’s Story</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap10">CHAPTER X.</a></td><td>The Lobster Quadrille</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap11">CHAPTER XI.</a></td><td>Who Stole the Tarts?</td></tr><tr><td><a href="https://www.gutenberg.org/cache/epub/11/pg11-images.html#chap12">CHAPTER XII.</a></td><td>Alice’s Evidence</td></tr></tbody></table>
-
 ## CHAPTER I.  
 Down the Rabbit-Hole
 
