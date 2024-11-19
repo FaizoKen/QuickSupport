@@ -1,1 +1,1 @@
-Faizo = Admin
+Faizo = Admin of HoYoMY
