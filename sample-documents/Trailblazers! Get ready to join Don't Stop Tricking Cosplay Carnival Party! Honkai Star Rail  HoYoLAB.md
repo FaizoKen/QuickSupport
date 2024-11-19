@@ -54,7 +54,7 @@ Should any of the following criteria be applicable to a submission or a particip
 
 6\. The participant has acted in any way that breaches the event rules as declared by the event organizer, interrupts the normal process of this event (such as influencing the fairness of the event), or any other actions that negatively impact this event.
 
-Please note that by submitting an entry using the event hashtag, participants agree to take part in this event, acknowledge and abide by the event rules, and consent to having their creative content, the corresponding profile links, and social media account names posted on the relevant platforms displayed on this event's webpage for the purposes of showcasing entries, voting, and displaying winning entries (if applicable).
+Please note that by submitting an entry using the event hashtag, participants agree to take part in this event, acknowledge and abide by the event rules, and consent to having their creative content, the corresponding profile links, and social media account names posted on the relevant platforms displayed on this event's webpage for the purposes of showcasing entries, voting, and displaying winning entries (if applicable)s.
 
 If you have any questions about this event, please contact us via hsrcs\_en@hoyoverse.com
 
