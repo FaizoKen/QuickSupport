@@ -1,5 +1,3 @@
- Terms of Service body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; } h1, h2, h3 { color: #333; } p { margin-bottom: 10px; } ul { margin-bottom: 10px; }
-
 Terms of Service
 ================
 
