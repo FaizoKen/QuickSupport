@@ -1,28 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Rules</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rules</title>
+  <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      color: #333;
+    }
+    a {
+      color: #007acc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <div id="content">
-        <h1>Rules</h1>
-        <div id="markdown-content"></div>
-    </div>
-
-    <script>
-        // Fetch the markdown file and render it
-        fetch('./rules.md')
-            .then(response => response.text())
-            .then(markdownText => {
-                // Convert Markdown to HTML and display it
-                document.getElementById('markdown-content').innerHTML = marked(markdownText);
-            })
-            .catch(error => {
-                console.error('Error fetching the Markdown file:', error);
-            });
-    </script>
+  <div id="content">
+    <h1>Loading...</h1>
+  </div>
+  <script>
+    async function loadMarkdown() {
+      try {
+        const response = await fetch('./rules.md');
+        if (!response.ok) {
+          throw new Error('Failed to load rules.md');
+        }
+        const markdown = await response.text();
+        const converter = new showdown.Converter();
+        const html = converter.makeHtml(markdown);
+        document.getElementById('content').innerHTML = html;
+      } catch (error) {
+        document.getElementById('content').innerHTML = '<p>Error loading content. Please try again later.</p>';
+        console.error(error);
+      }
+    }
+    loadMarkdown();
+  </script>
 </body>
 </html>
