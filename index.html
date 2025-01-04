@@ -28,11 +28,17 @@
     <h1>Loading...</h1>
   </div>
   <script>
+    function getMarkdownPath() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('file') || './rules.md';
+    }
+
     async function loadMarkdown() {
       try {
-        const response = await fetch('./rules.md');
+        const markdownPath = getMarkdownPath();
+        const response = await fetch(markdownPath);
         if (!response.ok) {
-          throw new Error('Failed to load rules.md');
+          throw new Error(`Failed to load ${markdownPath}`);
         }
         const markdown = await response.text();
         const converter = new showdown.Converter();
@@ -43,6 +49,7 @@
         console.error(error);
       }
     }
+
     loadMarkdown();
   </script>
 </body>
