@@ -21,20 +21,39 @@
     }
 
     .container {
-      margin: 20px;
+      margin: 10px;
+      padding: 10px;
+    }
+
+    .search-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .search-input {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .table-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+      max-width: 100%;
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
+      max-width: 1200px; /* Limit maximum width for better centering */
       border-collapse: collapse;
-      margin: 20px 0;
-      table-layout: fixed;
-    }
-
-    table,
-    th,
-    td {
-      border: 1px solid #ddd;
+      margin: 0;
+      table-layout: auto;
     }
 
     th,
@@ -42,6 +61,7 @@
       padding: 10px;
       text-align: center;
       word-wrap: break-word;
+      border: 1px solid #ddd;
     }
 
     th {
@@ -65,27 +85,38 @@
       color: red;
     }
 
-    .search-container {
-      margin: 20px 0;
-      text-align: center;
+    .highlighted {
+      background-color: #cecece;
     }
 
-    .search-input {
-      padding: 10px;
-      font-size: 16px;
-      width: 80%;
-      max-width: 400px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-
-    th:nth-child(7),
-    td:nth-child(7) {
+    .hidden {
       display: none;
     }
 
-    .highlighted {
-      background-color: #e6e2b5;
+    @media (max-width: 768px) {
+      table {
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+      }
+
+      .search-input {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search-input {
+        width: 90%;
+      }
+
+      .container {
+        margin: 5px;
+        padding: 5px;
+      }
     }
   </style>
 </head>
@@ -101,23 +132,25 @@
       <input type="text" id="searchInput" class="search-input" placeholder="Search for Server IDs..." aria-label="Search for Server IDs">
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Bot ID</th>
-          <th>Shard ID</th>
-          <th>Last Online</th>
-          <th>Last Uptime</th>
-          <th>Cached Servers</th>
-          <th>Cached Members</th>
-          <th>Server IDs</th>
-          <th>Current Ping (ms)</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="statusTable">
-      </tbody>
-    </table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Bot ID</th>
+            <th>Shard ID</th>
+            <th>Last Online</th>
+            <th>Last Uptime</th>
+            <th>Cached Servers</th>
+            <th>Cached Members</th>
+            <th class="hidden">Server IDs</th>
+            <th>Current Ping (ms)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="statusTable">
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -154,7 +187,7 @@
         botsToRender.forEach(bot => {
           const row = document.createElement("tr");
 
-          if (bot.bot_id === "1280984633739186400") {
+          if (bot.bot_id === "1280984633739186318") {
             row.classList.add("highlighted");
           }
 
@@ -165,7 +198,7 @@
             <td>${formatDuration(Date.now() - parseInt(bot.starting_time))}</td>
             <td>${bot.max_server_count}</td>
             <td>${bot.max_member_count}</td>
-            <td>${bot.server_ids?.join(", ") || "N/A"}</td>
+            <td class="hidden">${bot.server_ids?.join(", ") || "N/A"}</td>
             <td>${bot.average_ping > 0 ? bot.average_ping : "N/A"}</td>
             <td><span class="status ${bot.average_ping > 0 ? "status-up" : "status-down"}">${bot.average_ping > 0 ? "Up" : "Down"}</span></td>
           `;
@@ -181,7 +214,7 @@
         .then(response => response.json())
         .then(botData => {
           bots = botData.sort((a, b) => b.max_server_count - a.max_server_count);
-          filteredBots = bots; // Cache the full list
+          filteredBots = bots;
           renderRows(filteredBots);
 
           searchInput.addEventListener('input', event => {
@@ -189,7 +222,7 @@
               const searchTerm = event.target.value.toLowerCase();
               filteredBots = bots.filter(bot => bot.server_ids?.some(id => id.toLowerCase().includes(searchTerm)));
               renderRows(filteredBots);
-            }, 500); // Increased debounce delay
+            }, 500);
           });
         })
         .catch(error => {
