@@ -40,10 +40,11 @@
          margin: 20px auto;
          max-width: 100%;
          overflow-x: auto;
+         -webkit-overflow-scrolling: touch; /* Ensures smooth scrolling on mobile */
          }
          table {
          width: 100%;
-         max-width: 1200px; 
+         max-width: 1200px;
          border-collapse: collapse;
          margin: 0;
          table-layout: auto;
@@ -202,7 +203,7 @@
            filteredBots = bots.filter(bot => bot.server_ids?.some(id => id.toLowerCase().includes(searchTerm)));
            renderRows(filteredBots);
          }, 500);
-         });
+         })
          })
          .catch(error => {
          console.error("Error fetching data:", error);
