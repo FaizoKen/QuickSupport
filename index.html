@@ -3,7 +3,8 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>QuickSupport Bot Status</title>
+   <title>Bot Status Dashboard</title>
+   <link rel="icon" href="./logo.ico" type="image/x-icon">
    <style>
       body {
          font-family: Arial, sans-serif;
@@ -18,9 +19,15 @@
          text-align: center;
          padding: 15px 20px;
       }
+      header img {
+         height: 50px;
+         vertical-align: middle;
+      }
       header h1 {
          margin: 0;
          font-size: 1.8rem;
+         display: inline;
+         margin-left: 10px;
       }
       main {
          margin: 20px;
@@ -124,7 +131,10 @@
 </head>
 <body>
    <header>
-      <h1>QuickSupport Bot Status</h1>
+      <a href="https://quicksupport.faizo.net" target="_blank">
+         <img src="./logo.ico" alt="QuickSupport Bot Logo">
+      </a>
+      <h1>Bot Status Dashboard</h1>
    </header>
    <main>
       <section class="button-container">
@@ -194,7 +204,7 @@
                const response = await fetch(apiUrl);
                const data = await response.json();
                statusTable.innerHTML = data.length
-                  ? data.map(bot => generateBotRow(bot)).join("")
+                  ? data.map(bot => generateBotRow(bot)).join(" ")
                   : `<tr><td colspan="8">No data found.</td></tr>`;
             } catch {
                statusTable.innerHTML = `<tr><td colspan="8">Error loading data. Please try again later.</td></tr>`;
