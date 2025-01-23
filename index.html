@@ -184,7 +184,7 @@
                  <td>${bot.bot_id}</td>
                  <td>${bot.shard_id}</td>
                  <td>${timeAgo(Date.now() - parseInt(bot.last_update))}</td>
-                 <td>${formatDuration(Date.now() - parseInt(bot.starting_time))}</td>
+                 <td>${formatDuration(bot.total_uptime)}</td>
                  <td>${bot.max_server_count}</td>
                  <td>${bot.max_member_count}</td>
                  <td class="hidden">${bot.server_ids?.join(", ") || "N/A"}</td>
