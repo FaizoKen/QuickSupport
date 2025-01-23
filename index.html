@@ -22,36 +22,44 @@
          margin: 15px;
          padding: 15px;
       }
-      .search-bar {
+      .button-container {
          display: flex;
          justify-content: center;
+         align-items: center;
+         gap: 10px;
          margin: 20px 0;
       }
-      .search-bar input {
-         width: 300px;
+      .search-bar {
          padding: 10px;
-         border: 1px solid #374151;
+         font-size: 16px;
+         border: 1px solid #ccc;
          border-radius: 5px;
-         background-color: #1e1e1e;
-         color: #e0e0e0;
+         width: 200px;
       }
-      .search-bar button {
-         margin-left: 10px;
-         padding: 10px 15px;
+      .search-button,
+      .view-all-button {
+         padding: 10px 20px;
+         font-size: 16px;
+         color: #fff;
+         background-color: #4caf50;
          border: none;
          border-radius: 5px;
-         background-color: #faa92f;
-         color: #121212;
          cursor: pointer;
+         transition: background-color 0.3s;
       }
-      .search-bar button:hover {
-         background-color: #e68900;
+      .search-button:hover,
+      .view-all-button:hover {
+         background-color: #45a049;
       }
       .refresh-info {
          text-align: center;
          font-size: 18px;
          margin: 20px 0;
          color: #cfd8dc;
+      }
+      .refresh-info span {
+         font-weight: bold;
+         color: #ff9800;
       }
       .table-wrapper {
          overflow-x: auto;
@@ -111,12 +119,14 @@
       <h1>QuickSupport Bot Status</h1>
    </header>
    <main class="container">
-      <div class="search-bar">
-         <input type="text" id="serverIdInput" placeholder="Enter Server ID">
-         <button id="searchButton">Search</button>
+      <div class="button-container">
+         <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..." />
+         <button class="search-button" id="searchButton">Search</button>
+         <button class="view-all-button" id="viewAllButton">Reset</button>
       </div>
+      
       <div class="refresh-info">
-         Next data refresh in <span id="countdown" aria-live="polite">5:00</span> minutes
+         Next data refresh in <span id="countdown" aria-live="polite">0:00</span> minutes
       </div>
       <div class="table-wrapper">
          <table>
@@ -144,10 +154,17 @@
       document.addEventListener("DOMContentLoaded", () => {
          const statusTable = document.getElementById("statusTable");
          const countdownElement = document.getElementById("countdown");
+         const refreshInterval = 300000; // 5 minutes in milliseconds
+         let nextRefresh = Date.now() + refreshInterval - (Date.now() % refreshInterval);
+
+         const searchBar = document.getElementById("searchBar");
          const searchButton = document.getElementById("searchButton");
-         const serverIdInput = document.getElementById("serverIdInput");
-         const refreshInterval = 300000; // 5 minutes in ms
-         let timeRemaining = refreshInterval;
+         const viewAllButton = document.getElementById("viewAllButton");
+
+         const urlParams = new URLSearchParams(window.location.search);
+         const serverId = urlParams.get("server_id");
+         searchBar.value = serverId || "";
+         const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId || ""}`;
 
          const formatTime = (ms) => {
             const minutes = Math.floor(ms / 60000);
@@ -172,19 +189,16 @@
          };
 
          const updateCountdown = () => {
-            timeRemaining -= 1000;
+            const now = Date.now();
+            const timeRemaining = nextRefresh - now;
             countdownElement.textContent = formatTime(Math.max(timeRemaining, 0));
             if (timeRemaining <= 0) {
                fetchBotData();
-               timeRemaining = refreshInterval;
+               nextRefresh += refreshInterval;
             }
          };
 
          const fetchBotData = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const serverId = urlParams.get("server_id") || "";
-            const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
-            
             fetch(apiUrl, { headers: { "Cache-Control": "public, max-age=300" } })
                .then((response) => {
                   if (!response.ok) throw new Error("Failed to fetch data");
@@ -217,12 +231,20 @@
          };
 
          searchButton.addEventListener("click", () => {
-            const serverId = serverIdInput.value.trim();
+            const serverId = searchBar.value.trim();
             if (serverId) {
-               const newUrl = `${window.location.origin}${window.location.pathname}?server_id=${serverId}`;
-               window.history.pushState({ path: newUrl }, "", newUrl);
-               fetchBotData();
+               const currentUrl = new URL(window.location.href);
+               currentUrl.searchParams.set("server_id", serverId);
+               window.location.href = currentUrl.toString();
+            } else {
+               alert("Please enter a valid server ID.");
             }
+         });
+
+         viewAllButton.addEventListener("click", () => {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.delete("server_id");
+            window.location.href = currentUrl.toString();
          });
 
          fetchBotData();
