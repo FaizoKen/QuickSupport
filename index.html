@@ -9,11 +9,11 @@
          font-family: Arial, sans-serif;
          margin: 0;
          padding: 0;
-         background-color: #121212; /* Dark background */
-         color: #e0e0e0; /* Light text color */
+         background-color: #121212;
+         color: #e0e0e0;
       }
       header {
-         background-color: #1f2937; /* Darker header background */
+         background-color: #1f2937;
          color: #e0e0e0;
          text-align: center;
          padding: 15px 20px;
@@ -22,15 +22,36 @@
          margin: 15px;
          padding: 15px;
       }
+      .search-bar {
+         display: flex;
+         justify-content: center;
+         margin: 20px 0;
+      }
+      .search-bar input {
+         width: 300px;
+         padding: 10px;
+         border: 1px solid #374151;
+         border-radius: 5px;
+         background-color: #1e1e1e;
+         color: #e0e0e0;
+      }
+      .search-bar button {
+         margin-left: 10px;
+         padding: 10px 15px;
+         border: none;
+         border-radius: 5px;
+         background-color: #faa92f;
+         color: #121212;
+         cursor: pointer;
+      }
+      .search-bar button:hover {
+         background-color: #e68900;
+      }
       .refresh-info {
          text-align: center;
          font-size: 18px;
          margin: 20px 0;
-         color: #cfd8dc; /* Muted light text */
-      }
-      .refresh-info span {
-         font-weight: bold;
-         color: #ff9800; /* Highlighted orange color */
+         color: #cfd8dc;
       }
       .table-wrapper {
          overflow-x: auto;
@@ -41,31 +62,31 @@
          min-width: 800px;
          border-collapse: collapse;
          text-align: center;
-         background-color: #1e1e1e; /* Table background */
+         background-color: #1e1e1e;
          color: #e0e0e0;
       }
       th, td {
          padding: 10px;
-         border: 1px solid #374151; /* Dark gray borders */
+         border: 1px solid #374151;
       }
       th {
-         background-color: #374151; /* Header row background */
+         background-color: #374151;
          color: #e0e0e0;
       }
       tr:nth-child(even) {
-         background-color: #59597e; /* Slightly lighter row background for contrast */
+         background-color: #59597e;
       }
       .status {
          font-weight: bold;
       }
       .status-up {
-         color: #4caf50; /* Green for online */
+         color: #4caf50;
       }
       .status-down {
-         color: #f44336; /* Red for offline */
+         color: #f44336;
       }
       .highlighted {
-         background-color: #2a2a2a; /* Highlighted row background */
+         background-color: #2a2a2a;
       }
       @media (max-width: 768px) {
          table {
@@ -90,6 +111,10 @@
       <h1>QuickSupport Bot Status</h1>
    </header>
    <main class="container">
+      <div class="search-bar">
+         <input type="text" id="serverIdInput" placeholder="Enter Server ID">
+         <button id="searchButton">Search</button>
+      </div>
       <div class="refresh-info">
          Next data refresh in <span id="countdown" aria-live="polite">5:00</span> minutes
       </div>
@@ -119,13 +144,10 @@
       document.addEventListener("DOMContentLoaded", () => {
          const statusTable = document.getElementById("statusTable");
          const countdownElement = document.getElementById("countdown");
+         const searchButton = document.getElementById("searchButton");
+         const serverIdInput = document.getElementById("serverIdInput");
          const refreshInterval = 300000; // 5 minutes in ms
          let timeRemaining = refreshInterval;
-
-         // Get server_id from the URL parameters
-         const urlParams = new URLSearchParams(window.location.search);
-         const serverId = urlParams.get("server_id");
-         const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId || ""}`;
 
          const formatTime = (ms) => {
             const minutes = Math.floor(ms / 60000);
@@ -159,6 +181,10 @@
          };
 
          const fetchBotData = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serverId = urlParams.get("server_id") || "";
+            const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
+            
             fetch(apiUrl, { headers: { "Cache-Control": "public, max-age=300" } })
                .then((response) => {
                   if (!response.ok) throw new Error("Failed to fetch data");
@@ -189,6 +215,15 @@
                   statusTable.innerHTML = `<tr><td colspan="8">Failed to load data. Please try again later.</td></tr>`;
                });
          };
+
+         searchButton.addEventListener("click", () => {
+            const serverId = serverIdInput.value.trim();
+            if (serverId) {
+               const newUrl = `${window.location.origin}${window.location.pathname}?server_id=${serverId}`;
+               window.history.pushState({ path: newUrl }, "", newUrl);
+               fetchBotData();
+            }
+         });
 
          fetchBotData();
          setInterval(updateCountdown, 1000);
