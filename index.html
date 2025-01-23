@@ -122,6 +122,11 @@
          const refreshInterval = 300000; // 5 minutes in ms
          let timeRemaining = refreshInterval;
 
+         // Get server_id from the URL parameters
+         const urlParams = new URLSearchParams(window.location.search);
+         const serverId = urlParams.get("server_id");
+         const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId || ""}`;
+
          const formatTime = (ms) => {
             const minutes = Math.floor(ms / 60000);
             const seconds = Math.floor((ms % 60000) / 1000);
@@ -154,8 +159,6 @@
          };
 
          const fetchBotData = () => {
-            const apiUrl = "https://status.faizo.top/api/quicksupport";
-
             fetch(apiUrl, { headers: { "Cache-Control": "public, max-age=300" } })
                .then((response) => {
                   if (!response.ok) throw new Error("Failed to fetch data");
