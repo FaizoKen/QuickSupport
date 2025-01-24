@@ -215,7 +215,7 @@
             const searchBar = document.getElementById("searchBar");
             const searchButton = document.getElementById("searchButton");
             const viewAllButton = document.getElementById("viewAllButton");
-            const refreshInterval = 306000;
+            const refreshInterval = 306000; // 5.1 minutes in milliseconds
             let nextRefresh = localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
 
             const formatTime = (ms) => {
