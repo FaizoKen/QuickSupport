@@ -114,7 +114,8 @@
             color: #e0e0e0;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px;
             border: 1px solid #374151;
         }
@@ -154,7 +155,8 @@
                 font-size: 0.9rem;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 10px;
             }
         }
@@ -187,7 +189,8 @@
 
     <main>
         <section class="button-container">
-            <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..." aria-label="Search server by ID">
+            <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..."
+                aria-label="Search server by ID">
             <button class="button" id="searchButton" aria-label="Search for the server">Search</button>
             <button class="button" id="viewAllButton" aria-label="Reset the search">Reset</button>
         </section>
@@ -252,7 +255,8 @@
             };
 
             const fetchBotData = async (serverId = "") => {
-                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
+                // Ensure no "null" string is appended
+                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId || ""}`;
                 statusTable.innerHTML = `<tr><td colspan="8">Loading data...</td></tr>`;
 
                 try {
@@ -265,11 +269,11 @@
                         statusTable.innerHTML = `<tr><td colspan="8">No data found.</td></tr>`;
                     }
                 } catch (error) {
-                    statusTable.innerHTML = `<tr><td colspan="8">Error loading data. Please try again later.</td></tr>`;
+                    statusTable.innerHTML =
+                        `<tr><td colspan="8">Error loading data. Please try again later.</td></tr>`;
                     console.error('Fetch error:', error);
                 }
             };
-
             const renderBotData = (data) => {
                 statusTable.innerHTML = '';
                 data.forEach(bot => {
@@ -292,14 +296,31 @@
 
             const timeAgo = (timestamp) => {
                 const ms = Date.now() - timestamp;
-                const units = [
-                    { label: "week", value: 604800000 },
-                    { label: "day", value: 86400000 },
-                    { label: "hour", value: 3600000 },
-                    { label: "minute", value: 60000 },
-                    { label: "second", value: 1000 },
+                const units = [{
+                        label: "week",
+                        value: 604800000
+                    },
+                    {
+                        label: "day",
+                        value: 86400000
+                    },
+                    {
+                        label: "hour",
+                        value: 3600000
+                    },
+                    {
+                        label: "minute",
+                        value: 60000
+                    },
+                    {
+                        label: "second",
+                        value: 1000
+                    },
                 ];
-                for (const { label, value } of units) {
+                for (const {
+                        label,
+                        value
+                    } of units) {
                     const amount = Math.floor(ms / value);
                     if (amount > 0) return `${amount} ${label}${amount > 1 ? "s" : ""} ago`;
                 }
