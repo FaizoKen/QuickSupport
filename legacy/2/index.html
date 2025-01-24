@@ -169,18 +169,22 @@
     </header>
 
     <main>
+        <!-- Search and Reset Buttons -->
         <section class="button-container">
             <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..." aria-label="Search server by ID" />
             <button class="button" id="searchButton" aria-label="Search for the server">Search</button>
             <button class="button" id="viewAllButton" aria-label="Reset the search">Reset</button>
         </section>
 
+        <!-- Countdown Information -->
         <section class="refresh-info">
             Next data refresh in <span id="countdown" aria-live="polite">0:00</span> minutes
         </section>
 
+        <!-- Legend for Bot Types -->
         <div class="legend">🟦 Public Bot | 🟪 Private Bot</div>
 
+        <!-- Table for Displaying Bot Statuses -->
         <section class="table-wrapper">
             <table aria-label="Bot status information">
                 <thead>
@@ -214,7 +218,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const refreshInterval = 366000;
     let nextRefresh = localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
 
-    const getUrlParameter = (param) => new URLSearchParams(window.location.search).get(param);
+    // Helper to parse URL parameters
+    const getUrlParameter = (param) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    };
 
     const formatTime = (ms) => {
         const minutes = Math.floor(ms / 60000);
@@ -228,8 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
         countdownElement.textContent = formatTime(Math.max(timeRemaining, 0));
 
         if (timeRemaining <= 0) {
-            fetchBotData(getUrlParameter("server_id"));
-            nextRefresh = Date.now() + refreshInterval;
+            const serverId = getUrlParameter("server_id") || ""; // Use the `server_id` parameter if present
+            fetchBotData(serverId); // Fetch new data
+            nextRefresh = Date.now() + refreshInterval; // Reset the refresh timer
             localStorage.setItem("nextRefresh", nextRefresh);
         }
     };
@@ -290,35 +299,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const initializeSearch = () => {
         const serverId = getUrlParameter("server_id");
         if (serverId) {
-            searchBar.value = serverId;
-            fetchBotData(serverId);
+            searchBar.value = serverId; // Pre-fill the search bar
+            fetchBotData(serverId);    // Fetch data for the given server ID
         } else {
-            fetchBotData();
+            fetchBotData(); // Fetch all data if no server ID is provided
         }
     };
 
     searchButton.addEventListener("click", () => {
         const serverId = searchBar.value.trim();
         if (serverId === "" || !/^\d+$/.test(serverId)) {
-            alert("Please enter a valid Discord server ID.");
+            alert("Please enter a valid Discord server ID with only digits.");
         } else {
             const newUrl = `${window.location.pathname}?server_id=${serverId}`;
-            window.history.pushState({}, '', newUrl);
-            fetchBotData(serverId);
+            window.history.pushState({}, '', newUrl); // Update URL without refreshing
+            fetchBotData(serverId); // Fetch data for the entered server ID
         }
     });
 
     viewAllButton.addEventListener("click", () => {
         searchBar.value = "";
         const newUrl = `${window.location.pathname}`;
-        window.history.pushState({}, '', newUrl);
-        fetchBotData();
+        window.history.pushState({}, '', newUrl); // Remove server_id from URL
+        fetchBotData(); // Reset and fetch data without serverId
     });
 
-    initializeSearch();
-    setInterval(updateCountdown, 1000);
+    initializeSearch(); // Initialize search bar and fetch data
+    setInterval(updateCountdown, 1000); // Update countdown every second
 });
+
     </script>
+      
 </body>
 
 </html>
