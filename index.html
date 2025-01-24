@@ -39,6 +39,7 @@
             margin: 20px;
         }
 
+        /* Button and Search Bar Styles */
         .button-container {
             display: flex;
             justify-content: center;
@@ -96,6 +97,7 @@
             margin-bottom: 10px;
         }
 
+        /* Table Styles */
         .table-wrapper {
             overflow-x: auto;
             margin: 20px auto;
@@ -121,6 +123,7 @@
             font-weight: bold;
         }
 
+        /* Status Classes */
         .status-up {
             color: #4caf50;
             font-weight: bold;
@@ -131,6 +134,7 @@
             font-weight: bold;
         }
 
+        /* Bot Types */
         .public {
             background-color: #374672;
         }
@@ -139,6 +143,7 @@
             background-color: #4e3e61;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
             .search-bar {
                 width: 100%;
@@ -164,18 +169,22 @@
     </header>
 
     <main>
+        <!-- Search and Reset Buttons -->
         <section class="button-container">
-            <input type="text" id="searchBar" class="search-bar" placeholder="Enter Bot ID..." aria-label="Search bot by ID" />
-            <button class="button" id="searchButton" aria-label="Search for the bot">Search</button>
+            <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..." aria-label="Search server by ID" />
+            <button class="button" id="searchButton" aria-label="Search for the server">Search</button>
             <button class="button" id="viewAllButton" aria-label="Reset the search">Reset</button>
         </section>
 
+        <!-- Countdown Information -->
         <section class="refresh-info">
             Next data refresh in <span id="countdown" aria-live="polite">0:00</span> minutes
         </section>
 
+        <!-- Legend for Bot Types -->
         <div class="legend">🟦 Public Bot | 🟪 Private Bot</div>
 
+        <!-- Table for Displaying Bot Statuses -->
         <section class="table-wrapper">
             <table aria-label="Bot status information">
                 <thead>
@@ -206,7 +215,7 @@
             const searchBar = document.getElementById("searchBar");
             const searchButton = document.getElementById("searchButton");
             const viewAllButton = document.getElementById("viewAllButton");
-            const refreshInterval = 306000;
+            const refreshInterval = 306000; // 5.1 minutes in milliseconds
             let nextRefresh = localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
 
             const formatTime = (ms) => {
@@ -221,24 +230,21 @@
                 countdownElement.textContent = formatTime(Math.max(timeRemaining, 0));
 
                 if (timeRemaining <= 0) {
-                    fetchBotData();
-                    nextRefresh = Date.now() + refreshInterval;
+                    fetchBotData(); // Fetch new data
+                    nextRefresh = Date.now() + refreshInterval; // Reset the refresh timer
                     localStorage.setItem("nextRefresh", nextRefresh);
                 }
             };
 
-            const fetchBotData = async (botId = "") => {
-                const apiUrl = `https://status.faizo.top/api/quicksupport`;
+            const fetchBotData = async (serverId = "") => {
+                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
                 statusTable.innerHTML = `<tr><td colspan="8">Loading data...</td></tr>`;
 
                 try {
                     const response = await fetch(apiUrl);
                     const data = await response.json();
-
-                    const filteredData = botId ? data.filter(bot => bot.bot_id === botId) : data;
-
-                    if (filteredData.length) {
-                        renderBotData(filteredData);
+                    if (data.length) {
+                        renderBotData(data);
                     } else {
                         statusTable.innerHTML = `<tr><td colspan="8">No data found.</td></tr>`;
                     }
@@ -261,7 +267,7 @@
                         <td>${bot.cached_guilds}</td>
                         <td>${bot.cached_users}</td>
                         <td>${bot.current_latency} ms</td>
-                        <td><span class="${bot.is_online ? "status-up" : "status-down"}">${bot.is_online ? "Up" : "Down"}</span></td>
+                        <td><span class="${bot.is_online ? "status-up" : "status-down"}">${bot.is_online ? "Online" : "Offline"}</span></td>
                     `;
                     statusTable.appendChild(row);
                 });
@@ -284,11 +290,11 @@
             };
 
             searchButton.addEventListener("click", () => {
-                const botId = searchBar.value.trim();
-                if (botId === "" || !/^\d+$/.test(botId)) {
-                    alert("Please enter a valid Bot ID.");
+                const serverId = searchBar.value.trim();
+                if (serverId === "" || !/^\d+$/.test(serverId)) {
+                    alert("Please enter a valid Discord server ID with only digits.");
                 } else {
-                    fetchBotData(botId);
+                    fetchBotData(serverId);
                 }
             });
 
@@ -298,7 +304,7 @@
             });
 
             fetchBotData();
-            setInterval(updateCountdown, 1000);
+            setInterval(updateCountdown, 1000); // Update countdown every second
         });
     </script>
 </body>
