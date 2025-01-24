@@ -209,104 +209,127 @@
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const statusTable = document.getElementById("statusTable");
-            const countdownElement = document.getElementById("countdown");
-            const searchBar = document.getElementById("searchBar");
-            const searchButton = document.getElementById("searchButton");
-            const viewAllButton = document.getElementById("viewAllButton");
-            const refreshInterval = 306000; // 5.1 minutes in milliseconds
-            let nextRefresh = localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
+document.addEventListener("DOMContentLoaded", () => {
+    const statusTable = document.getElementById("statusTable");
+    const countdownElement = document.getElementById("countdown");
+    const searchBar = document.getElementById("searchBar");
+    const searchButton = document.getElementById("searchButton");
+    const viewAllButton = document.getElementById("viewAllButton");
+    const refreshInterval = 306000; // 5.1 minutes in milliseconds
+    let nextRefresh = localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
 
-            const formatTime = (ms) => {
-                const minutes = Math.floor(ms / 60000);
-                const seconds = Math.floor((ms % 60000) / 1000);
-                return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-            };
+    // Helper to parse URL parameters
+    const getUrlParameter = (param) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    };
 
-            const updateCountdown = () => {
-                const now = Date.now();
-                const timeRemaining = nextRefresh - now;
-                countdownElement.textContent = formatTime(Math.max(timeRemaining, 0));
+    const formatTime = (ms) => {
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    };
 
-                if (timeRemaining <= 0) {
-                    fetchBotData(); // Fetch new data
-                    nextRefresh = Date.now() + refreshInterval; // Reset the refresh timer
-                    localStorage.setItem("nextRefresh", nextRefresh);
-                }
-            };
+    const updateCountdown = () => {
+        const now = Date.now();
+        const timeRemaining = nextRefresh - now;
+        countdownElement.textContent = formatTime(Math.max(timeRemaining, 0));
 
-            const fetchBotData = async (serverId = "") => {
-                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
-                statusTable.innerHTML = `<tr><td colspan="8">Loading data...</td></tr>`;
+        if (timeRemaining <= 0) {
+            const serverId = getUrlParameter("server_id") || ""; // Use the `server_id` parameter if present
+            fetchBotData(serverId); // Fetch new data
+            nextRefresh = Date.now() + refreshInterval; // Reset the refresh timer
+            localStorage.setItem("nextRefresh", nextRefresh);
+        }
+    };
 
-                try {
-                    const response = await fetch(apiUrl);
-                    const data = await response.json();
-                    if (data.length) {
-                        renderBotData(data);
-                    } else {
-                        statusTable.innerHTML = `<tr><td colspan="8">No data found.</td></tr>`;
-                    }
-                } catch {
-                    statusTable.innerHTML = `<tr><td colspan="8">Error loading data. Please try again later.</td></tr>`;
-                }
-            };
+    const fetchBotData = async (serverId = "") => {
+        const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
+        statusTable.innerHTML = `<tr><td colspan="8">Loading data...</td></tr>`;
 
-            const renderBotData = (data) => {
-                statusTable.innerHTML = '';
-                data.forEach(bot => {
-                    const row = document.createElement("tr");
-                    row.classList.add(bot.is_public ? "public" : "private");
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            if (data.length) {
+                renderBotData(data);
+            } else {
+                statusTable.innerHTML = `<tr><td colspan="8">No data found.</td></tr>`;
+            }
+        } catch {
+            statusTable.innerHTML = `<tr><td colspan="8">Error loading data. Please try again later.</td></tr>`;
+        }
+    };
 
-                    row.innerHTML = `
-                        <td>${bot.bot_id}</td>
-                        <td>${bot.shard_id}</td>
-                        <td>${timeAgo(bot.last_updated)}</td>
-                        <td>${timeAgo(bot.last_uptime)}</td>
-                        <td>${bot.cached_guilds}</td>
-                        <td>${bot.cached_users}</td>
-                        <td>${bot.current_latency} ms</td>
-                        <td><span class="${bot.is_online ? "status-up" : "status-down"}">${bot.is_online ? "Up" : "Down"}</span></td>
-                    `;
-                    statusTable.appendChild(row);
-                });
-            };
+    const renderBotData = (data) => {
+        statusTable.innerHTML = '';
+        data.forEach(bot => {
+            const row = document.createElement("tr");
+            row.classList.add(bot.is_public ? "public" : "private");
 
-            const timeAgo = (timestamp) => {
-                const ms = Date.now() - timestamp;
-                const units = [
-                    { label: "week", value: 604800000 },
-                    { label: "day", value: 86400000 },
-                    { label: "hour", value: 3600000 },
-                    { label: "minute", value: 60000 },
-                    { label: "second", value: 1000 },
-                ];
-                for (const { label, value } of units) {
-                    const amount = Math.floor(ms / value);
-                    if (amount > 0) return `${amount} ${label}${amount > 1 ? "s" : ""} ago`;
-                }
-                return "just now";
-            };
-
-            searchButton.addEventListener("click", () => {
-                const serverId = searchBar.value.trim();
-                if (serverId === "" || !/^\d+$/.test(serverId)) {
-                    alert("Please enter a valid Discord server ID with only digits.");
-                } else {
-                    fetchBotData(serverId);
-                }
-            });
-
-            viewAllButton.addEventListener("click", () => {
-                searchBar.value = "";
-                fetchBotData();
-            });
-
-            fetchBotData();
-            setInterval(updateCountdown, 1000); // Update countdown every second
+            row.innerHTML = ` 
+                <td>${bot.bot_id}</td>
+                <td>${bot.shard_id}</td>
+                <td>${timeAgo(bot.last_updated)}</td>
+                <td>${timeAgo(bot.last_uptime)}</td>
+                <td>${bot.cached_guilds}</td>
+                <td>${bot.cached_users}</td>
+                <td>${bot.current_latency} ms</td>
+                <td><span class="${bot.is_online ? "status-up" : "status-down"}">${bot.is_online ? "Up" : "Down"}</span></td>
+            `;
+            statusTable.appendChild(row);
         });
+    };
+
+    const timeAgo = (timestamp) => {
+        const ms = Date.now() - timestamp;
+        const units = [
+            { label: "week", value: 604800000 },
+            { label: "day", value: 86400000 },
+            { label: "hour", value: 3600000 },
+            { label: "minute", value: 60000 },
+            { label: "second", value: 1000 },
+        ];
+        for (const { label, value } of units) {
+            const amount = Math.floor(ms / value);
+            if (amount > 0) return `${amount} ${label}${amount > 1 ? "s" : ""} ago`;
+        }
+        return "just now";
+    };
+
+    const initializeSearch = () => {
+        const serverId = getUrlParameter("server_id");
+        if (serverId) {
+            searchBar.value = serverId; // Pre-fill the search bar
+            fetchBotData(serverId);    // Fetch data for the given server ID
+        } else {
+            fetchBotData(); // Fetch all data if no server ID is provided
+        }
+    };
+
+    searchButton.addEventListener("click", () => {
+        const serverId = searchBar.value.trim();
+        if (serverId === "" || !/^\d+$/.test(serverId)) {
+            alert("Please enter a valid Discord server ID with only digits.");
+        } else {
+            const newUrl = `${window.location.pathname}?server_id=${serverId}`;
+            window.history.pushState({}, '', newUrl); // Update URL without refreshing
+            fetchBotData(serverId); // Fetch data for the entered server ID
+        }
+    });
+
+    viewAllButton.addEventListener("click", () => {
+        searchBar.value = "";
+        const newUrl = `${window.location.pathname}`;
+        window.history.pushState({}, '', newUrl); // Remove server_id from URL
+        fetchBotData(); // Reset and fetch data without serverId
+    });
+
+    initializeSearch(); // Initialize search bar and fetch data
+    setInterval(updateCountdown, 1000); // Update countdown every second
+});
+
     </script>
+      
 </body>
 
 </html>
