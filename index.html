@@ -203,7 +203,7 @@
         </section>
 
         <section class="refresh-info">
-            Next data refresh in <span id="countdown" aria-live="polite">0:00</span> minutes
+            Next data refresh in <span id="countdown" aria-live="polite">00:00</span> minutes
         </section>
 
         <div class="legend">🟦 Public Bot | 🟪 Private Bot</div>
@@ -238,7 +238,7 @@
             const searchBar = document.getElementById("searchBar");
             const searchButton = document.getElementById("searchButton");
             const viewAllButton = document.getElementById("viewAllButton");
-            const refreshInterval = 366000;
+            const refreshInterval = 600000;
             let nextRefresh = +localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
 
             const getUrlParameter = (param) => new URLSearchParams(window.location.search).get(param);
