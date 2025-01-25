@@ -7,14 +7,23 @@
     <title>Bot Status Dashboard</title>
     <link rel="icon" href="./logo.ico" type="image/x-icon">
     <style>
-        /* Global Styles */
+        :root {
+            --primary-color: #4caf50;
+            --secondary-color: #374151;
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #ff9800;
+            --card-bg-color: #1e1e1e;
+            --spinner-color: #f3f3f3;
+            --spinner-border-color: #4caf50;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #121212;
-            color: #e0e0e0;
-            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
 
         header {
@@ -35,18 +44,12 @@
             margin-left: 10px;
         }
 
-        main {
-            margin: 20px;
-        }
-
-        /* Button and Search Bar Styles */
         .button-container {
             display: flex;
             justify-content: center;
-            align-items: center;
             gap: 15px;
-            flex-wrap: wrap;
             margin: 20px 0;
+            flex-wrap: wrap;
         }
 
         .search-bar {
@@ -56,20 +59,20 @@
             border-radius: 5px;
             width: 250px;
             background-color: #333;
-            color: #e0e0e0;
+            color: var(--text-color);
             transition: border-color 0.3s ease;
         }
 
         .search-bar:focus {
             outline: none;
-            border-color: #4caf50;
+            border-color: var(--primary-color);
         }
 
         .button {
             padding: 10px 20px;
             font-size: 1rem;
             color: #fff;
-            background-color: #4caf50;
+            background-color: var(--primary-color);
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -86,11 +89,6 @@
             font-size: 1.1rem;
         }
 
-        .refresh-info span {
-            font-weight: bold;
-            color: #ff9800;
-        }
-
         .legend {
             text-align: center;
             font-size: 0.9rem;
@@ -98,7 +96,6 @@
             margin-bottom: 10px;
         }
 
-        /* Table Styles */
         .table-wrapper {
             overflow-x: auto;
             margin: 20px auto;
@@ -110,24 +107,22 @@
             width: 100%;
             border-collapse: collapse;
             text-align: center;
-            background-color: #1e1e1e;
-            color: #e0e0e0;
+            background-color: var(--card-bg-color);
         }
 
         th,
         td {
             padding: 12px;
-            border: 1px solid #374151;
+            border: 1px solid var(--secondary-color);
         }
 
         th {
-            background-color: #374151;
+            background-color: var(--secondary-color);
             font-weight: bold;
         }
 
-        /* Status Classes */
         .status-up {
-            color: #4caf50;
+            color: var(--primary-color);
             font-weight: bold;
         }
 
@@ -136,7 +131,6 @@
             font-weight: bold;
         }
 
-        /* Bot Types */
         .public {
             background-color: #374672;
         }
@@ -145,7 +139,26 @@
             background-color: #4e3e61;
         }
 
-        /* Responsive Design */
+        .spinner {
+            border: 4px solid var(--spinner-color);
+            border-top: 4px solid var(--spinner-border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         @media (max-width: 768px) {
             .search-bar {
                 width: 100%;
@@ -161,14 +174,9 @@
             }
         }
 
-        /* Small devices optimization */
         @media (max-width: 480px) {
             header h1 {
                 font-size: 1.5rem;
-            }
-
-            .search-bar {
-                font-size: 0.9rem;
             }
 
             .button {
@@ -189,14 +197,13 @@
 
     <main>
         <section class="button-container">
-            <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..."
-                aria-label="Search server by ID">
+            <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..." aria-label="Search server by ID">
             <button class="button" id="searchButton" aria-label="Search for the server">Search</button>
             <button class="button" id="viewAllButton" aria-label="Reset the search">Reset</button>
         </section>
 
         <section class="refresh-info">
-            Next data refresh in <span id="countdown" aria-live="polite">8:88</span> minutes
+            Next data refresh in <span id="countdown" aria-live="polite">0:00</span> minutes
         </section>
 
         <div class="legend">🟦 Public Bot | 🟪 Private Bot</div>
@@ -217,7 +224,7 @@
                 </thead>
                 <tbody id="statusTable">
                     <tr>
-                        <td colspan="8">Loading data...</td>
+                        <td colspan="8"><div class="spinner"></div></td>
                     </tr>
                 </tbody>
             </table>
@@ -232,7 +239,7 @@
             const searchButton = document.getElementById("searchButton");
             const viewAllButton = document.getElementById("viewAllButton");
             const refreshInterval = 366000;
-            let nextRefresh = localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
+            let nextRefresh = +localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
 
             const getUrlParameter = (param) => new URLSearchParams(window.location.search).get(param);
 
@@ -255,25 +262,23 @@
             };
 
             const fetchBotData = async (serverId = "") => {
-                // Ensure no "null" string is appended
-                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId || ""}`;
-                statusTable.innerHTML = `<tr><td colspan="8">Loading data...</td></tr>`;
+                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
+                statusTable.innerHTML = ""; // Clear table
 
                 try {
                     const response = await fetch(apiUrl);
                     const data = await response.json();
-
                     if (Array.isArray(data) && data.length > 0) {
                         renderBotData(data);
                     } else {
-                        statusTable.innerHTML = `<tr><td colspan="8">No data found.</td></tr>`;
+                        statusTable.innerHTML = "<tr><td colspan='8'>No data found.</td></tr>";
                     }
                 } catch (error) {
-                    statusTable.innerHTML =
-                        `<tr><td colspan="8">Error loading data. Please try again later.</td></tr>`;
+                    statusTable.innerHTML = "<tr><td colspan='8'>Error loading data. Please try again later.</td></tr>";
                     console.error('Fetch error:', error);
                 }
             };
+
             const renderBotData = (data) => {
                 statusTable.innerHTML = '';
                 data.forEach(bot => {
@@ -296,31 +301,14 @@
 
             const timeAgo = (timestamp) => {
                 const ms = Date.now() - timestamp;
-                const units = [{
-                        label: "week",
-                        value: 604800000
-                    },
-                    {
-                        label: "day",
-                        value: 86400000
-                    },
-                    {
-                        label: "hour",
-                        value: 3600000
-                    },
-                    {
-                        label: "minute",
-                        value: 60000
-                    },
-                    {
-                        label: "second",
-                        value: 1000
-                    },
+                const units = [
+                    { label: "week", value: 604800000 },
+                    { label: "day", value: 86400000 },
+                    { label: "hour", value: 3600000 },
+                    { label: "minute", value: 60000 },
+                    { label: "second", value: 1000 }
                 ];
-                for (const {
-                        label,
-                        value
-                    } of units) {
+                for (const { label, value } of units) {
                     const amount = Math.floor(ms / value);
                     if (amount > 0) return `${amount} ${label}${amount > 1 ? "s" : ""} ago`;
                 }
@@ -350,7 +338,7 @@
 
             viewAllButton.addEventListener("click", () => {
                 searchBar.value = "";
-                const newUrl = `${window.location.pathname}`;
+                const newUrl = window.location.pathname;
                 window.history.pushState({}, '', newUrl);
                 fetchBotData();
             });
