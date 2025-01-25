@@ -262,7 +262,7 @@
             };
 
             const fetchBotData = async (serverId = "") => {
-                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId}`;
+                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId || ''}`;
                 statusTable.innerHTML = ""; // Clear table
 
                 try {
