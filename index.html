@@ -166,7 +166,7 @@
             };
 
             let refreshTimer = null;
-            let nextRefreshTime = Date.now() + 60000; // Initial fallback value
+            let nextRefreshTime = 0;
 
             const utils = {
                 formatTime: ms => {
@@ -211,6 +211,7 @@
                 fetchData: async (serverId = '') => {
                     try {
                         utils.toggleLoading(true);
+                        nextRefreshTime = Date.now() + 60000;
                         const response = await fetch(`${API.endpoint}${serverId || ''}`);
                         
                         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -218,7 +219,6 @@
                         const jsonResponse = await response.json();
                         const data = jsonResponse.data;
                         
-                        // Update refresh time from API response
                         nextRefreshTime = parseInt(jsonResponse.expired);
                         
                         if (!Array.isArray(data) || data.length === 0) {
