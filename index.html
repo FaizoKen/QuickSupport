@@ -200,6 +200,7 @@
                 },
                 toggleLoading: (isLoading = true) => {
                     DOM.searchButton.disabled = isLoading;
+                    DOM.viewAllButton.disabled = isLoading;
                     DOM.statusTable.setAttribute('aria-busy', isLoading);
                     DOM.searchButton.querySelector('.button-text').textContent = 
                         isLoading ? 'Searching...' : 'Search';
