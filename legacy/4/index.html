@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" class="js-enabled">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="description" content="Real-time status dashboard for QuickSupport bots">
+    <meta property="og:title" content="QuickSupport Bot Status Dashboard">
+    <meta property="og:description" content="Monitor the real-time status and performance of QuickSupport bots">
+    <meta property="og:image" content="https://quicksupport.faizo.net/logo.png">
+    <meta name="theme-color" content="#4CAF50">
+    <title>Bot Status Dashboard</title>
+    <link rel="icon" href="./logo.ico" type="image/x-icon">
+    <style>
+        :root{
+            --primary-color:#4CAF50;--secondary-color:#374151;--background-color:#121212;
+            --text-color:#e0e0e0;--accent-color:#FF9800;--card-bg-color:#1E1E1E;
+            --error-color:#EF5350;--success-color:#66BB6A;--warning-color:#FFA726;
+            --public-color:#374672;--private-color:#4E3E61;--transition-duration:0.3s;
+            --mobile-breakpoint:640px;--tablet-breakpoint:1024px;
+        }
+
+        body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;margin:0;padding:0;
+            background-color:var(--background-color);color:var(--text-color);line-height:1.6;}
+
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+
+        header{background-color:var(--secondary-color);padding:1rem;display:flex;align-items:center;
+            justify-content:center;gap:1rem;position:sticky;top:0;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+
+        .logo-link{display:inline-flex;transition:opacity var(--transition-duration);}
+        .logo-link:focus-visible{outline:2px solid var(--accent-color);outline-offset:2px;}
+        .logo-img{height:50px;width:auto;}
+
+        h1{margin:0;font-size:1.75rem;font-weight:600;}
+
+        main{padding:2rem 1rem;max-width:1600px;margin:0 auto;}
+
+        .controls{display:grid;grid-template-columns:1fr auto auto;gap:1rem;margin-bottom:2rem;}
+        .search-input{padding:0.75rem;font-size:1rem;border:2px solid transparent;border-radius:8px;
+            background-color:var(--card-bg-color);color:var(--text-color);transition:border-color var(--transition-duration);}
+        .search-input:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(76,175,80,0.2);}
+
+        .button{padding:0.75rem 1.5rem;font-size:1rem;font-weight:600;border:none;border-radius:8px;
+            cursor:pointer;transition:background-color var(--transition-duration),transform 0.1s ease;
+            display:inline-flex;align-items:center;gap:0.5rem;min-height:44px;}
+        .button:disabled{opacity:0.7;cursor:not-allowed;}
+        .button:active{transform:scale(0.98);}
+        .button--primary{background-color:var(--primary-color);color:white;}
+        .button--primary:hover{background-color:#43A047;}
+        .button--secondary{background-color:var(--secondary-color);color:white;}
+        .button--secondary:hover{background-color:#2D3748;}
+
+        .status-indicator{display:inline-flex;align-items:center;gap:0.5rem;font-weight:600;}
+        .status-indicator::before{content:'';width:12px;height:12px;border-radius:50%;background-color:currentColor;}
+        .status-indicator--up{color:var(--success-color);}
+        .status-indicator--down{color:var(--error-color);}
+
+        .table-container{overflow-x:auto;background-color:var(--card-bg-color);border-radius:8px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.2);margin:2rem 0;-webkit-overflow-scrolling:touch;}
+        .status-table{width:100%;border-collapse:collapse;min-width:800px;}
+        .status-table th,.status-table td{padding:1rem;text-align:left;border-bottom:1px solid var(--secondary-color);}
+        .status-table th{background-color:var(--secondary-color);font-weight:600;position:sticky;top:0;}
+        tr[data-public="true"]{background-color:var(--public-color);}
+        tr[data-public="false"]{background-color:var(--private-color);}
+        .status-table tr:last-child td{border-bottom:none;}
+
+        .public-private-legend{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:0.9rem;}
+        .legend-item{display:flex;align-items:center;gap:0.5rem;}
+        .legend-color{width:16px;height:16px;border-radius:4px;}
+        .public-color{background-color:var(--public-color);}
+        .private-color{background-color:var(--private-color);}
+
+        .error-message{background-color:var(--error-color);color:white;padding:1rem;border-radius:8px;
+            margin:2rem 0;display:flex;align-items:center;gap:1rem;}
+
+        .refresh-info{text-align:center;margin:1rem 0;font-size:0.9rem;opacity:0.9;}
+
+        @media (max-width:768px){
+            .controls{grid-template-columns:1fr;}
+            h1{font-size:1.5rem;}
+            .button{width:100%;justify-content:center;}
+            .status-table th,.status-table td{padding:0.75rem;font-size:0.9em;}
+        }
+
+        @media (max-width:480px){
+            header{flex-direction:column;text-align:center;gap:0.75rem;padding:1rem 0.5rem;}
+            .logo-img{height:40px;}
+            .public-private-legend{flex-direction:column;gap:0.75rem;}
+            .search-input{font-size:0.95rem;}
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="https://quicksupport.faizo.net" class="logo-link" target="_blank" rel="noopener">
+            <img src="./logo.ico" alt="QuickSupport" class="logo-img" loading="lazy">
+            <span class="sr-only">Visit QuickSupport Website</span>
+        </a>
+        <h1>Bot Status Dashboard</h1>
+    </header>
+
+    <main>
+        <div class="controls">
+            <input type="text" id="searchBar" class="search-input" placeholder="Search by Server ID..."
+                inputmode="numeric" pattern="\d+" aria-label="Search by Discord Server ID">
+            <button type="button" id="searchButton" class="button button--primary">
+                <span class="button-text">Search</span>
+            </button>
+            <button type="button" id="viewAllButton" class="button button--secondary">Reset</button>
+        </div>
+
+        <div aria-live="polite" class="refresh-info">
+            Next refresh in <span id="countdown">--:--</span>
+        </div>
+
+        <div class="public-private-legend" aria-label="Bot type legend">
+            <div class="legend-item">
+                <span class="legend-color public-color" aria-hidden="true"></span>
+                Public Bot
+            </div>
+            <div class="legend-item">
+                <span class="legend-color private-color" aria-hidden="true"></span>
+                Private Bot
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="status-table" aria-label="Bot Status Information">
+                <thead>
+                    <tr>
+                        <th scope="col">Bot ID</th>
+                        <th scope="col">Shard</th>
+                        <th scope="col">Last Updated</th>
+                        <th scope="col">Uptime</th>
+                        <th scope="col">Guilds</th>
+                        <th scope="col">Users</th>
+                        <th scope="col">Latency</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="statusTable" aria-busy="false">
+                    <tr>
+                        <td colspan="8" class="loading-overlay">
+                            <div class="spinner" aria-label="Loading data"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        (function(){
+            'use strict';
+            const DOM={
+                statusTable:document.getElementById('statusTable'),
+                countdown:document.getElementById('countdown'),
+                searchBar:document.getElementById('searchBar'),
+                searchButton:document.getElementById('searchButton'),
+                viewAllButton:document.getElementById('viewAllButton')
+            };
+
+            const API={
+                endpoint:'https://status.faizo.top/api/quicksupport/',
+                refreshInterval:Date.now()-bot.expired,
+                retryDelay:5e3
+            };
+
+            let refreshTimer=null,nextRefreshTime=Date.now()+API.refreshInterval;
+
+            const utils={
+                formatTime:ms=>{
+                    const minutes=Math.floor(ms/6e4);
+                    const seconds=Math.floor((ms%6e4)/1e3);
+                    return `${minutes}:${seconds.toString().padStart(2,'0')}`;
+                },
+                timeAgo:timestamp=>{
+                    const ms=Date.now()-timestamp;
+                    const ranges=[{unit:'week',ms:6.048e8},{unit:'day',ms:8.64e7},
+                        {unit:'hour',ms:3.6e6},{unit:'minute',ms:6e4},{unit:'second',ms:1e3}];
+                    for(const {unit,ms:divisor} of ranges){
+                        const value=Math.floor(ms/divisor);
+                        if(value>=1) return `${value} ${unit}${value!==1?'s':''} ago`;
+                    }
+                    return 'Just now';
+                },
+                handleError:(message,retryCallback)=>{
+                    DOM.statusTable.innerHTML=`<tr><td colspan="8">
+                        <div class="error-message" role="alert">
+                            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                            ${message}
+                            <button class="button button--text" id="retryButton">Retry</button>
+                        </div></td></tr>`;
+                    document.getElementById('retryButton').onclick=retryCallback;
+                },
+                toggleLoading:(isLoading=true)=>{
+                    DOM.searchButton.disabled=isLoading;
+                    DOM.statusTable.setAttribute('aria-busy',isLoading);
+                    DOM.searchButton.querySelector('.button-text').textContent=isLoading?'Searching...':'Search';
+                }
+            };
+
+            const dataHandler={
+                fetchData:async(serverId='')=>{
+                    try{
+                        utils.toggleLoading(true);
+                        const response=await fetch(`${API.endpoint}${serverId||''}`);
+                        if(!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        const jsonResponse = await response.json();
+                        const data = jsonResponse.data;
+                        if(!Array.isArray(data)||data.length===0){
+                            utils.handleError('No bots found',()=>dataHandler.fetchData(serverId));
+                            return;
+                        }
+                        DOM.statusTable.innerHTML=data.map(bot=>`
+                            <tr data-bot-id="${bot.bot_id}" data-public="${bot.is_public}">
+                                <td>${bot.bot_id}</td>
+                                <td>${bot.shard_id}</td>
+                                <td>${utils.timeAgo(bot.last_updated)}</td>
+                                <td>${utils.timeAgo(bot.last_uptime)}</td>
+                                <td>${bot.cached_guilds.toLocaleString()}</td>
+                                <td>${bot.cached_users.toLocaleString()}</td>
+                                <td>${bot.current_latency} ms</td>
+                                <td>
+                                    <span class="status-indicator ${bot.is_online?'status-indicator--up':'status-indicator--down'}">
+                                        ${bot.is_online?'Operational':'Offline'}
+                                    </span>
+                                </td>
+                            </tr>`).join('');
+                    } catch(error){
+                        console.error('Fetch error:',error);
+                        utils.handleError('Failed to load data.',()=>location.reload());
+                    } finally{
+                        utils.toggleLoading(false);
+                    }
+                }
+            };
+
+            const timer={
+                start:()=>{
+                    timer.update();
+                    refreshTimer=setInterval(timer.update,1e3);
+                },
+                update:()=>{
+                    const remaining=nextRefreshTime-Date.now();
+                    DOM.countdown.textContent=utils.formatTime(remaining);
+                    if(remaining<=0){
+                        nextRefreshTime=Date.now()+API.refreshInterval;
+                        const serverId=new URLSearchParams(window.location.search).get('server_id');
+                        dataHandler.fetchData(serverId);
+                    }
+                }
+            };
+
+            const eventHandlers={
+                handleSearch:()=>{
+                    const serverId=DOM.searchBar.value.trim();
+                    if(!/^\d{16,20}$/.test(serverId)) return alert('Please enter a valid 16-20 digit Discord Server ID');
+                    const url=new URL(window.location);
+                    url.searchParams.set('server_id',serverId);
+                    window.history.pushState({},'',url);
+                    dataHandler.fetchData(serverId);
+                },
+                handleReset:()=>{
+                    DOM.searchBar.value='';
+                    window.history.replaceState({},'',window.location.pathname);
+                    dataHandler.fetchData();
+                }
+            };
+
+            const init=()=>{
+                const serverId=new URLSearchParams(window.location.search).get('server_id');
+                DOM.searchBar.value=serverId||'';
+                dataHandler.fetchData(serverId);
+                DOM.searchBar.addEventListener('keypress',e=>e.key==='Enter'&&eventHandlers.handleSearch());
+                DOM.searchButton.addEventListener('click',eventHandlers.handleSearch);
+                DOM.viewAllButton.addEventListener('click',eventHandlers.handleReset);
+                window.addEventListener('popstate',init);
+                timer.start();
+            };
+
+            document.addEventListener('DOMContentLoaded',init);
+        })();
+    </script>
+</body>
+</html>
