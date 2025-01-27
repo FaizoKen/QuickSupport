@@ -1,187 +1,321 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="js-enabled">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Real-time status dashboard for QuickSupport bots">
+    <meta property="og:title" content="QuickSupport Bot Status Dashboard">
+    <meta property="og:description" content="Monitor the real-time status and performance of QuickSupport bots">
+    <meta property="og:image" content="https://quicksupport.faizo.net/logo.png">
+    <meta name="theme-color" content="#4CAF50">
     <title>Bot Status Dashboard</title>
     <link rel="icon" href="./logo.ico" type="image/x-icon">
     <style>
         :root {
-            --primary-color: #4caf50;
+            --primary-color: #4CAF50;
             --secondary-color: #374151;
             --background-color: #121212;
             --text-color: #e0e0e0;
-            --accent-color: #ff9800;
-            --card-bg-color: #1e1e1e;
-            --spinner-color: #f3f3f3;
-            --spinner-border-color: #4caf50;
+            --accent-color: #FF9800;
+            --card-bg-color: #1E1E1E;
+            --error-color: #EF5350;
+            --success-color: #66BB6A;
+            --warning-color: #FFA726;
+            --public-color: #374672;
+            --private-color: #4E3E61;
+            --transition-duration: 0.3s;
         }
 
+        /* Minified CSS for better performance */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--background-color);
             color: var(--text-color);
+            line-height: 1.6
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0
         }
 
         header {
-            background-color: #1f2937;
-            text-align: center;
-            padding: 15px 20px;
-        }
-
-        header img {
-            height: 50px;
-            vertical-align: middle;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            display: inline;
-            margin-left: 10px;
-        }
-
-        .button-container {
+            background-color: var(--secondary-color);
+            padding: 1rem;
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
         }
 
-        .search-bar {
-            padding: 10px;
+        .logo-link {
+            display: inline-flex;
+            transition: opacity var(--transition-duration)
+        }
+
+        .logo-link:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 600
+        }
+
+        main {
+            padding: 2rem 1rem;
+            max-width: 1600px;
+            margin: 0 auto
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            margin-bottom: 2rem
+        }
+
+        .search-input {
+            padding: 0.75rem;
             font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 250px;
-            background-color: #333;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background-color: var(--card-bg-color);
             color: var(--text-color);
-            transition: border-color 0.3s ease;
+            transition: border-color var(--transition-duration)
         }
 
-        .search-bar:focus {
+        .search-input:focus {
             outline: none;
             border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2)
         }
 
         .button {
-            padding: 10px 20px;
+            padding: 0.75rem 1.5rem;
             font-size: 1rem;
-            color: #fff;
-            background-color: var(--primary-color);
+            font-weight: 600;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        .refresh-info {
-            text-align: center;
-            margin: 15px 0;
-            font-size: 1.1rem;
-        }
-
-        .legend {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #cfd8dc;
-            margin-bottom: 10px;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            margin: 20px auto;
-            max-width: 95%;
             border-radius: 8px;
+            cursor: pointer;
+            transition: background-color var(--transition-duration), transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem
         }
 
-        table {
+        .button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed
+        }
+
+        .button:active {
+            transform: scale(0.98)
+        }
+
+        .button--primary {
+            background-color: var(--primary-color);
+            color: white
+        }
+
+        .button--primary:hover {
+            background-color: #43A047
+        }
+
+        .button--secondary {
+            background-color: var(--secondary-color);
+            color: white
+        }
+
+        .button--secondary:hover {
+            background-color: #2D3748
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600
+        }
+
+        .status-indicator::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: currentColor
+        }
+
+        .status-indicator--up {
+            color: var(--success-color)
+        }
+
+        .status-indicator--down {
+            color: var(--error-color)
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background-color: var(--card-bg-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin: 2rem 0
+        }
+
+        .status-table {
             width: 100%;
             border-collapse: collapse;
-            text-align: center;
-            background-color: var(--card-bg-color);
+            min-width: 800px
         }
 
-        th,
-        td {
-            padding: 12px;
-            border: 1px solid var(--secondary-color);
+        .status-table th,
+        .status-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--secondary-color)
         }
 
-        th {
+        .status-table th {
             background-color: var(--secondary-color);
-            font-weight: bold;
+            font-weight: 600;
+            position: sticky;
+            top: 0
         }
 
-        .status-up {
-            color: var(--primary-color);
-            font-weight: bold;
+        tr[data-public="true"] {
+            background-color: var(--public-color);
         }
 
-        .status-down {
-            color: #f44336;
-            font-weight: bold;
+        tr[data-public="false"] {
+            background-color: var(--private-color);
         }
 
-        .public {
-            background-color: #374672;
+        .status-table tr:last-child td {
+            border-bottom: none
         }
 
-        .private {
-            background-color: #4e3e61;
+        .loading-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 2rem;
         }
 
         .spinner {
-            border: 4px solid var(--spinner-color);
-            border-top: 4px solid var(--spinner-border-color);
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+            animation: spin 1s linear infinite
+        }
+
+        .public-private-legend {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+            font-size: 0.9rem
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px
+        }
+
+        .public-color {
+            background-color: var(--public-color)
+        }
+
+        .private-color {
+            background-color: var(--private-color)
+        }
+
+        .error-message {
+            background-color: var(--error-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem
+        }
+
+        .button--text {
+            background: none;
+            border: none;
+            color: inherit;
+            text-decoration: underline;
+            padding: 0
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
+            to {
+                transform: rotate(360deg)
             }
         }
 
-        @media (max-width: 768px) {
-            .search-bar {
-                width: 100%;
+        @media (max-width:768px) {
+            .controls {
+                grid-template-columns: 1fr
             }
 
-            table {
-                font-size: 0.9rem;
-            }
-
-            th,
-            td {
-                padding: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.5rem;
+            h1 {
+                font-size: 1.5rem
             }
 
             .button {
-                font-size: 0.9rem;
-                padding: 8px 16px;
+                width: 100%
+            }
+
+            .status-table th,
+            .status-table td {
+                padding: 0.75rem
+            }
+        }
+
+        @media (max-width:480px) {
+            header {
+                flex-direction: column;
+                text-align: center
+            }
+
+            .public-private-legend {
+                flex-direction: column;
+                gap: 0.75rem
             }
         }
     </style>
@@ -189,163 +323,256 @@
 
 <body>
     <header>
-        <a href="https://quicksupport.faizo.net" target="_blank" aria-label="QuickSupport Bot">
-            <img src="./logo.ico" alt="QuickSupport Bot Logo">
+        <a href="https://quicksupport.faizo.net" class="logo-link" target="_blank" rel="noopener">
+            <img src="./logo.ico" alt="QuickSupport" class="logo-img">
+            <span class="sr-only">Visit QuickSupport Website</span>
         </a>
         <h1>Bot Status Dashboard</h1>
     </header>
 
     <main>
-        <section class="button-container">
-            <input type="text" id="searchBar" class="search-bar" placeholder="Enter server ID..." aria-label="Search server by ID">
-            <button class="button" id="searchButton" aria-label="Search for the server">Search</button>
-            <button class="button" id="viewAllButton" aria-label="Reset the search">Reset</button>
-        </section>
+        <div class="controls">
+            <input type="text" id="searchBar" class="search-input" placeholder="Search by Server ID..."
+                inputmode="numeric" pattern="\d+" aria-label="Search by Discord Server ID">
+            <button type="button" id="searchButton" class="button button--primary" aria-label="Search">
+                <span class="button-text">Search</span>
+            </button>
+            <button type="button" id="viewAllButton" class="button button--secondary" aria-label="Reset search">
+                Reset
+            </button>
+        </div>
 
-        <section class="refresh-info">
-            Next data refresh in <span id="countdown" aria-live="polite">00:00</span> minutes
-        </section>
+        <div aria-live="polite" class="refresh-info">
+            Next refresh in <span id="countdown">--:--</span>
+        </div>
 
-        <div class="legend">🟦 Public Bot | 🟪 Private Bot</div>
+        <div class="public-private-legend" aria-label="Bot type legend">
+            <div class="legend-item">
+                <span class="legend-color public-color" aria-hidden="true"></span>
+                Public Bot
+            </div>
+            <div class="legend-item">
+                <span class="legend-color private-color" aria-hidden="true"></span>
+                Private Bot
+            </div>
+        </div>
 
-        <section class="table-wrapper">
-            <table aria-label="Bot status information">
+        <div class="table-container">
+            <table class="status-table" aria-label="Bot Status Information">
                 <thead>
                     <tr>
-                        <th>Bot ID</th>
-                        <th>Shard ID</th>
-                        <th>Last Updated</th>
-                        <th>Last Uptime</th>
-                        <th>Cached Guilds</th>
-                        <th>Cached Users</th>
-                        <th>Current Latency</th>
-                        <th>Status</th>
+                        <th scope="col">Bot ID</th>
+                        <th scope="col">Shard</th>
+                        <th scope="col">Last Updated</th>
+                        <th scope="col">Uptime</th>
+                        <th scope="col">Guilds</th>
+                        <th scope="col">Users</th>
+                        <th scope="col">Latency</th>
+                        <th scope="col">Status</th>
                     </tr>
                 </thead>
-                <tbody id="statusTable">
+                <tbody id="statusTable" aria-busy="false">
                     <tr>
-                        <td colspan="8"><div class="spinner"></div></td>
+                        <td colspan="8" class="loading-overlay">
+                            <div class="spinner" aria-label="Loading data"></div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
-        </section>
+        </div>
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const statusTable = document.getElementById("statusTable");
-            const countdownElement = document.getElementById("countdown");
-            const searchBar = document.getElementById("searchBar");
-            const searchButton = document.getElementById("searchButton");
-            const viewAllButton = document.getElementById("viewAllButton");
-            const refreshInterval = 600000;
-            let nextRefresh = +localStorage.getItem("nextRefresh") || Date.now() + refreshInterval;
+        (function () {
+            'use strict';
 
-            const getUrlParameter = (param) => new URLSearchParams(window.location.search).get(param);
-
-            const formatTime = (ms) => {
-                const minutes = Math.floor(ms / 60000);
-                const seconds = Math.floor((ms % 60000) / 1000);
-                return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+            const DOM = {
+                statusTable: document.getElementById('statusTable'),
+                countdown: document.getElementById('countdown'),
+                searchBar: document.getElementById('searchBar'),
+                searchButton: document.getElementById('searchButton'),
+                viewAllButton: document.getElementById('viewAllButton')
             };
 
-            const updateCountdown = () => {
-                const now = Date.now();
-                const timeRemaining = nextRefresh - now;
-                countdownElement.textContent = formatTime(Math.max(timeRemaining, 0));
-
-                if (timeRemaining <= 0) {
-                    fetchBotData(getUrlParameter("server_id"));
-                    nextRefresh = Date.now() + refreshInterval;
-                    localStorage.setItem("nextRefresh", nextRefresh);
-                }
+            const API = {
+                endpoint: 'https://status.faizo.top/api/quicksupport/',
+                refreshInterval: 600000,
+                retryDelay: 5000
             };
 
-            const fetchBotData = async (serverId = "") => {
-                const apiUrl = `https://status.faizo.top/api/quicksupport/${serverId || ''}`;
-                statusTable.innerHTML = ""; // Clear table
+            let refreshTimer = null;
+            let nextRefreshTime = Date.now() + API.refreshInterval;
 
-                try {
-                    const response = await fetch(apiUrl);
-                    const data = await response.json();
-                    if (Array.isArray(data) && data.length > 0) {
-                        renderBotData(data);
-                    } else {
-                        statusTable.innerHTML = "<tr><td colspan='8'>No data found.</td></tr>";
+            const utils = {
+                formatTime: ms => {
+                    const minutes = Math.floor(ms / 60000);
+                    const seconds = Math.floor((ms % 60000) / 1000);
+                    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                },
+
+                timeAgo: timestamp => {
+                    const ms = Date.now() - timestamp;
+                    const ranges = [{
+                            unit: 'week',
+                            ms: 6048e5
+                        },
+                        {
+                            unit: 'day',
+                            ms: 864e5
+                        },
+                        {
+                            unit: 'hour',
+                            ms: 36e5
+                        },
+                        {
+                            unit: 'minute',
+                            ms: 6e4
+                        },
+                        {
+                            unit: 'second',
+                            ms: 1e3
+                        }
+                    ];
+
+                    for (const {
+                            unit,
+                            ms: divisor
+                        } of ranges) {
+                        const value = Math.floor(ms / divisor);
+                        if (value >= 1) {
+                            return `${value} ${unit}${value !== 1 ? 's' : ''} ago`;
+                        }
                     }
-                } catch (error) {
-                    statusTable.innerHTML = "<tr><td colspan='8'>Error loading data. Please try again later.</td></tr>";
-                    console.error('Fetch error:', error);
-                }
-            };
+                    return 'Just now';
+                },
 
-            const renderBotData = (data) => {
-                statusTable.innerHTML = '';
-                data.forEach(bot => {
-                    const row = document.createElement("tr");
-                    row.classList.add(bot.is_public ? "public" : "private");
-
-                    row.innerHTML = `
-                        <td>${bot.bot_id}</td>
-                        <td>${bot.shard_id}</td>
-                        <td>${timeAgo(bot.last_updated)}</td>
-                        <td>${timeAgo(bot.last_uptime)}</td>
-                        <td>${bot.cached_guilds}</td>
-                        <td>${bot.cached_users}</td>
-                        <td>${bot.current_latency} ms</td>
-                        <td><span class="${bot.is_online ? "status-up" : "status-down"}">${bot.is_online ? "Up" : "Down"}</span></td>
+                handleError: (message, retryCallback) => {
+                    DOM.statusTable.innerHTML = `
+                        <tr>
+                            <td colspan="8">
+                                <div class="error-message" role="alert">
+                                    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                    </svg>
+                                    ${message}
+                                    <button class="button button--text" onclick="${retryCallback}">Retry</button>
+                                </div>
+                            </td>
+                        </tr>
                     `;
-                    statusTable.appendChild(row);
+                },
+
+                toggleLoading: (isLoading = true) => {
+                    DOM.searchButton.disabled = isLoading;
+                    DOM.statusTable.setAttribute('aria-busy', isLoading);
+                    DOM.searchButton.querySelector('.button-text').textContent =
+                        isLoading ? 'Searching...' : 'Search';
+                }
+            };
+
+            const dataHandler = {
+                fetchData: async (serverId = '') => {
+                    try {
+                        utils.toggleLoading(true);
+                        const response = await fetch(`${API.endpoint}${serverId || ''}`);
+
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                        const data = await response.json();
+
+                        if (!Array.isArray(data) || data.length === 0) {
+                            utils.handleError('No bots found', 'dataHandler.fetchData()');
+                            return;
+                        }
+
+                        dataHandler.updateTable(data);
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        utils.handleError('Failed to load data.', 'location.reload()');
+                    } finally {
+                        utils.toggleLoading(false);
+                    }
+                },
+
+                updateTable: bots => {
+                    DOM.statusTable.innerHTML = bots.map(bot => `
+                        <tr data-bot-id="${bot.bot_id}" 
+                            data-public="${bot.is_public}"
+                            role="row">
+                            <td>${bot.bot_id}</td>
+                            <td>${bot.shard_id}</td>
+                            <td>${utils.timeAgo(bot.last_updated)}</td>
+                            <td>${utils.timeAgo(bot.last_uptime)}</td>
+                            <td>${bot.cached_guilds.toLocaleString()}</td>
+                            <td>${bot.cached_users.toLocaleString()}</td>
+                            <td>${bot.current_latency} ms</td>
+                            <td>
+                                <span class="status-indicator ${bot.is_online ? 'status-indicator--up' : 'status-indicator--down'}">
+                                    ${bot.is_online ? 'Operational' : 'Offline'}
+                                </span>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            };
+
+            const timer = {
+                start: () => {
+                    timer.update();
+                    refreshTimer = setInterval(timer.update, 1000);
+                },
+
+                update: () => {
+                    const remaining = nextRefreshTime - Date.now();
+                    DOM.countdown.textContent = utils.formatTime(remaining);
+
+                    if (remaining <= 0) {
+                        nextRefreshTime = Date.now() + API.refreshInterval;
+                        dataHandler.fetchData(new URLSearchParams(window.location.search).get('server_id'));
+                    }
+                }
+            };
+
+            const eventHandlers = {
+                handleSearch: () => {
+                    const serverId = DOM.searchBar.value.trim();
+
+                    if (!/^\d{16,20}$/.test(serverId)) {
+                        alert('Please enter a valid 16-20 digit Discord Server ID');
+                        return;
+                    }
+
+                    const url = new URL(window.location);
+                    url.searchParams.set('server_id', serverId);
+                    window.history.pushState({}, '', url);
+                    dataHandler.fetchData(serverId);
+                },
+
+                handleReset: () => {
+                    DOM.searchBar.value = '';
+                    window.history.replaceState({}, '', window.location.pathname);
+                    dataHandler.fetchData();
+                }
+            };
+
+            const init = () => {
+                const serverId = new URLSearchParams(window.location.search).get('server_id');
+                DOM.searchBar.value = serverId || '';
+                dataHandler.fetchData(serverId);
+
+                DOM.searchBar.addEventListener('keypress', e => {
+                    if (e.key === 'Enter') eventHandlers.handleSearch();
                 });
+
+                DOM.searchButton.addEventListener('click', eventHandlers.handleSearch);
+                DOM.viewAllButton.addEventListener('click', eventHandlers.handleReset);
+                window.addEventListener('popstate', () => init());
+
+                timer.start();
             };
 
-            const timeAgo = (timestamp) => {
-                const ms = Date.now() - timestamp;
-                const units = [
-                    { label: "week", value: 604800000 },
-                    { label: "day", value: 86400000 },
-                    { label: "hour", value: 3600000 },
-                    { label: "minute", value: 60000 },
-                    { label: "second", value: 1000 }
-                ];
-                for (const { label, value } of units) {
-                    const amount = Math.floor(ms / value);
-                    if (amount > 0) return `${amount} ${label}${amount > 1 ? "s" : ""} ago`;
-                }
-                return "just now";
-            };
-
-            const initializeSearch = () => {
-                const serverId = getUrlParameter("server_id");
-                if (serverId) {
-                    searchBar.value = serverId;
-                    fetchBotData(serverId);
-                } else {
-                    fetchBotData();
-                }
-            };
-
-            searchButton.addEventListener("click", () => {
-                const serverId = searchBar.value.trim();
-                if (serverId === "" || !/^\d+$/.test(serverId)) {
-                    alert("Please enter a valid Discord server ID.");
-                } else {
-                    const newUrl = `${window.location.pathname}?server_id=${serverId}`;
-                    window.history.pushState({}, '', newUrl);
-                    fetchBotData(serverId);
-                }
-            });
-
-            viewAllButton.addEventListener("click", () => {
-                searchBar.value = "";
-                const newUrl = window.location.pathname;
-                window.history.pushState({}, '', newUrl);
-                fetchBotData();
-            });
-
-            initializeSearch();
-            setInterval(updateCountdown, 1000);
-        });
+            document.addEventListener('DOMContentLoaded', init);
+        })();
     </script>
 </body>
 
