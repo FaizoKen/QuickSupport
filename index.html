@@ -1,4 +1,390 @@
-<!DOCTYPE html><html lang="en" class="js-enabled"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,shrink-to-fit=no"><meta name="description" content="Real-time status dashboard for QuickSupport bots"><meta property="og:title" content="QuickSupport Bot Status Dashboard"><meta property="og:description" content="Monitor the real-time status and performance of QuickSupport bots"><meta name="theme-color" content="#4CAF50"><title>Bot Status Dashboard</title><style>:root{--primary-color:#4CAF50;--secondary-color:#374151;--background-color:#121212;--text-color:#e0e0e0;--accent-color:#FF9800;--card-bg-color:#1E1E1E;--error-color:#EF5350;--success-color:#66BB6A;--warning-color:#FFA726;--public-color:#7756ac;--private-color:#c5c750;--transition-duration:0.3s;--mobile-breakpoint:640px;--tablet-breakpoint:1024px}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;margin:0;padding:0;background-color:var(--background-color);color:var(--text-color);line-height:1.6}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}header{background-color:var(--secondary-color);padding:1rem;display:flex;align-items:center;justify-content:center;gap:1rem;top:0;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,.3)}.logo-link{display:inline-flex;transition:opacity var(--transition-duration)}.logo-link:focus-visible{outline:2px solid var(--accent-color);outline-offset:2px}.logo-img{height:40px;width:auto}h1{margin:0;font-size:1.75rem;font-weight:600}main{padding:2rem 1rem;max-width:1600px;margin:0 auto}.controls{display:grid;grid-template-columns:1fr auto auto;gap:1rem;margin-bottom:2rem}.search-input{padding:.75rem;font-size:1rem;border:2px solid transparent;border-radius:8px;background-color:var(--card-bg-color);color:var(--text-color);transition:border-color var(--transition-duration)}.search-input:focus{outline:0;border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(76,175,80,.2)}.button{padding:.75rem 1.5rem;font-size:1rem;font-weight:600;border:none;border-radius:8px;cursor:pointer;transition:background-color var(--transition-duration),transform .1s ease;display:inline-flex;align-items:center;gap:.5rem;min-height:44px}.button:disabled{opacity:.7;cursor:not-allowed}.button:active{transform:scale(.98)}.button--primary{background-color:var(--primary-color);color:#fff}.button--primary:hover{background-color:#43a047}.button--secondary{background-color:var(--secondary-color);color:#fff}.button--secondary:hover{background-color:#2d3748}.status-indicator{display:inline-flex;align-items:center;gap:.5rem;font-weight:600}.status-indicator::before{content:'';width:12px;height:12px;border-radius:50%;background-color:currentColor}.status-indicator--up{color:var(--success-color)}.status-indicator--down{color:var(--error-color)}.table-container{overflow-x:auto;background-color:var(--card-bg-color);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.2);margin:2rem 0;-webkit-overflow-scrolling:touch}.status-table{width:100%;border-collapse:collapse;min-width:800px}.status-table td,.status-table th{padding:1rem;text-align:left;border-bottom:1px solid var(--secondary-color)}.status-table th{background-color:var(--secondary-color);font-weight:600;position:sticky;top:0}tr[data-public=true]{box-shadow:inset 5px 0 0 0 var(--public-color)}tr[data-public=false]{box-shadow:inset 5px 0 0 0 var(--private-color)}.status-table tr:last-child td{border-bottom:none}.public-private-legend{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.9rem}.legend-item{display:flex;align-items:center;gap:.5rem}.legend-color{width:16px;height:16px;border-radius:4px}.public-color{background-color:var(--public-color)}.private-color{background-color:var(--private-color)}.error-message{background-color:var(--error-color);color:#fff;padding:1rem;border-radius:8px;margin:2rem 0;display:flex;align-items:center;gap:1rem}.refresh-info{text-align:center;margin:1rem 0;font-size:.9rem;opacity:.9}@media (max-width:768px){.controls{grid-template-columns:1fr}h1{font-size:1.5rem}.button{width:100%;justify-content:center}.status-table td,.status-table th{padding:.75rem;font-size:.9em}}@media (max-width:480px){header{flex-direction:column;text-align:center;gap:.75rem;padding:1rem .5rem}.logo-img{height:40px}.public-private-legend{flex-direction:column;gap:.75rem}.search-input{font-size:.95rem}}</style></head><body><header><a href="https://quicksupport.faizo.net" class="logo-link" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="2168.6" height="2139.4" viewBox="0 0 2168.6 2139.4" class="logo-img" loading="lazy"><title>logomin</title><path d="M1710.1,780.5c53.8,55.4,0,122.4,0,122.4l-333.2,326.7-18.1,17.7s-55.3,23.8-93.3,0c-15.6-9.7-54.5-45.3-95.2-83.9-58.7-55.8-120.8-118-120.8-118s-20.9-41.5-13.7-81.3c2.8-15.3,9.6-30.3,23.4-42.7,46.7-42.1,103.4-29.9,127.9-5.5s122.7,119.9,122.7,119.9l67.6-64.7,214.1-204.8S1656.3,725.1,1710.1,780.5Z" transform="translate(-8.2 -9.9)" fill="#fff"/><path d="M476.1,1817.5l20,41.2-241.2,270c-80.7,51.5-146-9.8-146-9.8-34.9-30.1-38.2-70-35-97.9h0c62.5,146.6,171.7,69.2,171.7,69.2Z" transform="translate(-8.2 -9.9)" fill="#90c5fe"/><path d="M695.2,2065.4s24.2,21.4,58.5,18.8c-56.9,96.8-135,17.9-135,17.9L496.1,1858.7l-20-41.2c-13.1-100.2-94.9-143.7-154.5-106.2,2.6-9.6-11.1-13.5-11.1-13.5l-257-76.9c-53.2-43.2-50-94.6-37.8-125.2H16c3.1,14.2,13.4,18.2,13.4,18.2l416.5,119.4s46.7,11.9,64.1,58.2Z" transform="translate(-8.2 -9.9)" fill="#90c5fe"/><path d="M1375.9,1752.1v226.3a168.8,168.8,0,0,1-61.9-17.7l-253.5-158.2c-6-4.7-12.6-9-7.4-27.4l46.9-192.5Z" transform="translate(-8.2 -9.9)" fill="#90c5fe"/><path d="M786.5,480.4V919.5l-192.1,82.3c-8.7,3.2-17,5.5-17-7.9l5.5-615.2a127,127,0,0,1,3.9-32.5Z" transform="translate(-8.2 -9.9)" fill="#90c5fe"/><path d="M476.1,1817.5,245.6,2090.2S136.4,2167.6,73.9,2021h0a142.7,142.7,0,0,1,7.7-33l233.7-267.5c3.7-3.5,5.6-6.5,6.3-9.2C381.2,1673.8,463,1717.3,476.1,1817.5Z" transform="translate(-8.2 -9.9)" fill="#fff"/><path d="M980.2,1189.6,753.7,2084.2c-34.3,2.6-58.5-18.8-58.5-18.8L510,1691.6c-17.4-46.3-64.1-58.2-64.1-58.2L29.4,1514s-10.3-4-13.4-18.2h-.3l.3-.7c12.5-30.5,33.8-39.6,33.8-39.6l807.9-370C980.2,1080,980.2,1189.6,980.2,1189.6Z" transform="translate(-8.2 -9.9)" fill="#fff"/><path d="M2098.7,277.4c52.8,9.1,78.6,60.3,78.1,98l-2.7,721.6c-54.8,398.1-267.4,597-721.7,863.7-25.8,16.4-53.1,19.7-76.6,17.7V1752.1c604.6-339.4,576.7-691.5,576.7-691.5l1.2-579.2c-344.9,9.5-575-214.9-575-214.9-71.6,56.9-276.3,219.7-592.3,213.9L586.8,346.2c12.3-47.6,53.3-71.6,113.6-71.6,234.3.1,424.7-54.7,634.2-250.7,0,0,53.3-32.5,98.4,1.4C1639,207.8,1813.8,279,2098.7,277.4Z" transform="translate(-8.2 -9.9)" fill="#fff"/><path d="M1953.8,481.4l-1.2,579.2s27.9,352.1-576.7,691.5l1-522.5,333.2-326.7s53.8-67,0-122.4-118.6-14.2-118.6-14.2L1377.4,971.1l1.4-704.6S1608.9,490.9,1953.8,481.4Z" transform="translate(-8.2 -9.9)" fill="#ee3e54"/><path d="M1170.3,1163.4c40.7,38.6,79.6,74.2,95.2,83.9,38,23.8,93.3,0,93.3,0l18.1-17.7-1,522.5-276-169.5,59.8-246.1C1175.4,1270.5,1178,1212.9,1170.3,1163.4Z" transform="translate(-8.2 -9.9)" fill="#8b2e4c"/><path d="M1378.8,266.5l-1.4,704.6-67.6,64.7s-98.1-95.5-122.7-119.9-81.2-36.6-127.9,5.5c-13.8,12.4-20.6,27.4-23.4,42.7-72.2-42-163.2-55.5-249.3-44.6V480.4C1102.5,486.2,1307.2,323.4,1378.8,266.5Z" transform="translate(-8.2 -9.9)" fill="#8b2e4c"/></svg> <span class="sr-only">Visit QuickSupport Website</span></a><h1>Bot Status Dashboard</h1></header><main><div class="controls"><input type="text" id="searchBar" class="search-input" placeholder="Search by Server ID..." inputmode="numeric" pattern="\d+" aria-label="Search by Discord Server ID"> <button type="button" id="searchButton" class="button button--primary"><span class="button-text">Search</span></button> <button type="button" id="viewAllButton" class="button button--secondary">Reset</button></div><div aria-live="polite" class="refresh-info">Next refresh in <span id="countdown">--:--</span></div><div class="public-private-legend" aria-label="Bot type legend"><div class="legend-item"><span class="legend-color public-color" aria-hidden="true"></span> Public Bot</div><div class="legend-item"><span class="legend-color private-color" aria-hidden="true"></span> Private Bot</div></div><div class="table-container"><table class="status-table" aria-label="Bot Status Information"><thead><tr><th scope="col">Bot ID</th><th scope="col">Shard</th><th scope="col">Last Updated</th><th scope="col">Uptime</th><th scope="col">Guilds</th><th scope="col">Users</th><th scope="col">Latency</th><th scope="col">Status</th></tr></thead><tbody id="statusTable" aria-busy="false"><tr><td colspan="8" class="loading-overlay"><div class="spinner" aria-label="Loading data"></div></td></tr></tbody></table></div></main><script>(function () {
+<!DOCTYPE html>
+<html lang="en" class="js-enabled">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,shrink-to-fit=no">
+    <meta name="description" content="Real-time status dashboard for QuickSupport bots">
+    <meta property="og:title" content="QuickSupport Bot Status Dashboard">
+    <meta property="og:description" content="Monitor the real-time status and performance of QuickSupport bots">
+    <meta property="og:image" content="https://quicksupport.faizo.net/logo.ico">
+    <meta name="theme-color" content="#4CAF50">
+    <title>Bot Status Dashboard</title>
+    <link rel="icon" href="./logo.ico" type="image/x-icon">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #374151;
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #FF9800;
+            --card-bg-color: #1E1E1E;
+            --error-color: #EF5350;
+            --success-color: #66BB6A;
+            --warning-color: #FFA726;
+            --public-color: #7756ac;
+            --private-color: #c5c750;
+            --transition-duration: 0.3s;
+            --mobile-breakpoint: 640px;
+            --tablet-breakpoint: 1024px
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .3)
+        }
+
+        .logo-link {
+            display: inline-flex;
+            transition: opacity var(--transition-duration)
+        }
+
+        .logo-link:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 600
+        }
+
+        main {
+            padding: 2rem 1rem;
+            max-width: 1600px;
+            margin: 0 auto
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            margin-bottom: 2rem
+        }
+
+        .search-input {
+            padding: .75rem;
+            font-size: 1rem;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
+            transition: border-color var(--transition-duration)
+        }
+
+        .search-input:focus {
+            outline: 0;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, .2)
+        }
+
+        .button {
+            padding: .75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color var(--transition-duration), transform .1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            min-height: 44px
+        }
+
+        .button:disabled {
+            opacity: .7;
+            cursor: not-allowed
+        }
+
+        .button:active {
+            transform: scale(.98)
+        }
+
+        .button--primary {
+            background-color: var(--primary-color);
+            color: #fff
+        }
+
+        .button--primary:hover {
+            background-color: #43a047
+        }
+
+        .button--secondary {
+            background-color: var(--secondary-color);
+            color: #fff
+        }
+
+        .button--secondary:hover {
+            background-color: #2d3748
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-weight: 600
+        }
+
+        .status-indicator::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: currentColor
+        }
+
+        .status-indicator--up {
+            color: var(--success-color)
+        }
+
+        .status-indicator--down {
+            color: var(--error-color)
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background-color: var(--card-bg-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+            margin: 2rem 0;
+            -webkit-overflow-scrolling: touch
+        }
+
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px
+        }
+
+        .status-table td,
+        .status-table th {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--secondary-color)
+        }
+
+        .status-table th {
+            background-color: var(--secondary-color);
+            font-weight: 600;
+            position: sticky;
+            top: 0
+        }
+
+        tr[data-public=true] {
+            box-shadow: inset 5px 0 0 0 var(--public-color)
+        }
+
+        tr[data-public=false] {
+            box-shadow: inset 5px 0 0 0 var(--private-color)
+        }
+
+        .status-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .public-private-legend {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+            font-size: .9rem
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px
+        }
+
+        .public-color {
+            background-color: var(--public-color)
+        }
+
+        .private-color {
+            background-color: var(--private-color)
+        }
+
+        .error-message {
+            background-color: var(--error-color);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem
+        }
+
+        .refresh-info {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: .9rem;
+            opacity: .9
+        }
+
+        @media (max-width:768px) {
+            .controls {
+                grid-template-columns: 1fr
+            }
+
+            h1 {
+                font-size: 1.5rem
+            }
+
+            .button {
+                width: 100%;
+                justify-content: center
+            }
+
+            .status-table td,
+            .status-table th {
+                padding: .75rem;
+                font-size: .9em
+            }
+        }
+
+        @media (max-width:480px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: .75rem;
+                padding: 1rem .5rem
+            }
+
+            .logo-img {
+                height: 40px
+            }
+
+            .public-private-legend {
+                flex-direction: column;
+                gap: .75rem
+            }
+
+            .search-input {
+                font-size: .95rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header><a href="https://quicksupport.faizo.net" class="logo-link" target="_blank" rel="noopener"><svg
+                xmlns="http://www.w3.org/2000/svg" width="2168.6" height="2139.4" viewBox="0 0 2168.6 2139.4"
+                class="logo-img" loading="lazy">
+                <title>logomin</title>
+                <path
+                    d="M1710.1,780.5c53.8,55.4,0,122.4,0,122.4l-333.2,326.7-18.1,17.7s-55.3,23.8-93.3,0c-15.6-9.7-54.5-45.3-95.2-83.9-58.7-55.8-120.8-118-120.8-118s-20.9-41.5-13.7-81.3c2.8-15.3,9.6-30.3,23.4-42.7,46.7-42.1,103.4-29.9,127.9-5.5s122.7,119.9,122.7,119.9l67.6-64.7,214.1-204.8S1656.3,725.1,1710.1,780.5Z"
+                    transform="translate(-8.2 -9.9)" fill="#fff" />
+                <path
+                    d="M476.1,1817.5l20,41.2-241.2,270c-80.7,51.5-146-9.8-146-9.8-34.9-30.1-38.2-70-35-97.9h0c62.5,146.6,171.7,69.2,171.7,69.2Z"
+                    transform="translate(-8.2 -9.9)" fill="#90c5fe" />
+                <path
+                    d="M695.2,2065.4s24.2,21.4,58.5,18.8c-56.9,96.8-135,17.9-135,17.9L496.1,1858.7l-20-41.2c-13.1-100.2-94.9-143.7-154.5-106.2,2.6-9.6-11.1-13.5-11.1-13.5l-257-76.9c-53.2-43.2-50-94.6-37.8-125.2H16c3.1,14.2,13.4,18.2,13.4,18.2l416.5,119.4s46.7,11.9,64.1,58.2Z"
+                    transform="translate(-8.2 -9.9)" fill="#90c5fe" />
+                <path
+                    d="M1375.9,1752.1v226.3a168.8,168.8,0,0,1-61.9-17.7l-253.5-158.2c-6-4.7-12.6-9-7.4-27.4l46.9-192.5Z"
+                    transform="translate(-8.2 -9.9)" fill="#90c5fe" />
+                <path d="M786.5,480.4V919.5l-192.1,82.3c-8.7,3.2-17,5.5-17-7.9l5.5-615.2a127,127,0,0,1,3.9-32.5Z"
+                    transform="translate(-8.2 -9.9)" fill="#90c5fe" />
+                <path
+                    d="M476.1,1817.5,245.6,2090.2S136.4,2167.6,73.9,2021h0a142.7,142.7,0,0,1,7.7-33l233.7-267.5c3.7-3.5,5.6-6.5,6.3-9.2C381.2,1673.8,463,1717.3,476.1,1817.5Z"
+                    transform="translate(-8.2 -9.9)" fill="#fff" />
+                <path
+                    d="M980.2,1189.6,753.7,2084.2c-34.3,2.6-58.5-18.8-58.5-18.8L510,1691.6c-17.4-46.3-64.1-58.2-64.1-58.2L29.4,1514s-10.3-4-13.4-18.2h-.3l.3-.7c12.5-30.5,33.8-39.6,33.8-39.6l807.9-370C980.2,1080,980.2,1189.6,980.2,1189.6Z"
+                    transform="translate(-8.2 -9.9)" fill="#fff" />
+                <path
+                    d="M2098.7,277.4c52.8,9.1,78.6,60.3,78.1,98l-2.7,721.6c-54.8,398.1-267.4,597-721.7,863.7-25.8,16.4-53.1,19.7-76.6,17.7V1752.1c604.6-339.4,576.7-691.5,576.7-691.5l1.2-579.2c-344.9,9.5-575-214.9-575-214.9-71.6,56.9-276.3,219.7-592.3,213.9L586.8,346.2c12.3-47.6,53.3-71.6,113.6-71.6,234.3.1,424.7-54.7,634.2-250.7,0,0,53.3-32.5,98.4,1.4C1639,207.8,1813.8,279,2098.7,277.4Z"
+                    transform="translate(-8.2 -9.9)" fill="#fff" />
+                <path
+                    d="M1953.8,481.4l-1.2,579.2s27.9,352.1-576.7,691.5l1-522.5,333.2-326.7s53.8-67,0-122.4-118.6-14.2-118.6-14.2L1377.4,971.1l1.4-704.6S1608.9,490.9,1953.8,481.4Z"
+                    transform="translate(-8.2 -9.9)" fill="#ee3e54" />
+                <path
+                    d="M1170.3,1163.4c40.7,38.6,79.6,74.2,95.2,83.9,38,23.8,93.3,0,93.3,0l18.1-17.7-1,522.5-276-169.5,59.8-246.1C1175.4,1270.5,1178,1212.9,1170.3,1163.4Z"
+                    transform="translate(-8.2 -9.9)" fill="#8b2e4c" />
+                <path
+                    d="M1378.8,266.5l-1.4,704.6-67.6,64.7s-98.1-95.5-122.7-119.9-81.2-36.6-127.9,5.5c-13.8,12.4-20.6,27.4-23.4,42.7-72.2-42-163.2-55.5-249.3-44.6V480.4C1102.5,486.2,1307.2,323.4,1378.8,266.5Z"
+                    transform="translate(-8.2 -9.9)" fill="#8b2e4c" />
+            </svg> <span class="sr-only">Visit QuickSupport Website</span></a>
+        <h1>Bot Status Dashboard</h1>
+    </header>
+    <main>
+        <div class="controls"><input type="text" id="searchBar" class="search-input"
+                placeholder="Search by Server ID..." inputmode="numeric" pattern="\d+"
+                aria-label="Search by Discord Server ID"> <button type="button" id="searchButton"
+                class="button button--primary"><span class="button-text">Search</span></button> <button type="button"
+                id="viewAllButton" class="button button--secondary">Reset</button></div>
+        <div aria-live="polite" class="refresh-info">Next refresh in <span id="countdown">--:--</span></div>
+        <div class="public-private-legend" aria-label="Bot type legend">
+            <div class="legend-item"><span class="legend-color public-color" aria-hidden="true"></span> Public Bot</div>
+            <div class="legend-item"><span class="legend-color private-color" aria-hidden="true"></span> Private Bot
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="status-table" aria-label="Bot Status Information">
+                <thead>
+                    <tr>
+                        <th scope="col">Bot ID</th>
+                        <th scope="col">Shard</th>
+                        <th scope="col">Last Updated</th>
+                        <th scope="col">Uptime</th>
+                        <th scope="col">Guilds</th>
+                        <th scope="col">Users</th>
+                        <th scope="col">Latency</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="statusTable" aria-busy="false">
+                    <tr>
+                        <td colspan="8" class="loading-overlay">
+                            <div class="spinner" aria-label="Loading data"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <script>
+        (function () {
             'use strict';
             const DOM = {
                 statusTable: document.getElementById('statusTable'),
@@ -162,4 +548,8 @@
             };
 
             document.addEventListener('DOMContentLoaded', init);
-        })();</script></body></html>
+        })();
+    </script>
+</body>
+
+</html>
